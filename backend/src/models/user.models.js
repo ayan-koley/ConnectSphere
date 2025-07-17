@@ -4,7 +4,7 @@ const AuthProviderSchema = new Schema(
     {
         provider: {
             type: String,
-            enum: ["email", "google", "facebook", "instagram"]
+            enum: ["email", "oauth_google", "oauth_facebook"]
         },
         providerId: {
             type: String,
