@@ -1,4 +1,4 @@
-import { Schema, model, models } from "mongoose";
+import { Schema, model } from "mongoose";
 
 const UserProfileSchema = new Schema(
   {
@@ -29,12 +29,16 @@ const UserProfileSchema = new Schema(
       trim: true,
       default: "",
     },
+    description: {
+      type: String,
+      trim: true,
+      default: "",
+    }
     // Add more custom fields here
   },
   { timestamps: true }
 );
 
-console.log("models ", models);
 
-const UserProfile = models.UserProfile || model("UserProfile", UserProfileSchema);
+const UserProfile = model("UserProfile", UserProfileSchema);
 export default UserProfile;

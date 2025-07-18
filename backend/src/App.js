@@ -9,8 +9,8 @@ app.use(clerkMiddleware({
 }));
 
 
-import authRouter from './routes/user.routes.js';
-app.use("/api/webhook", authRouter);
+import authRouter from './routes/auth.routes.js';
+app.use("/api/v1/webhook", authRouter);
 
 export {
     app
