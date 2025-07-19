@@ -1,9 +1,14 @@
 import { Router } from "express";
-import { register } from "../controllers/auth.controllers.js";
-
+import { requiredAuth } from '../middlewares/requiredAuth.js'
+import { updatefirstName, updatelastName, updateAvatar, updateBio, updateDescription } from "../controllers/userProfile.controllers.js";
 const router = Router();
-router.route("/register").post(register);
 
+router.use(requiredAuth);
 
+router.route("/update/firstName").patch(updatefirstName)
+router.route("/update/lastName").patch(updatelastName)
+router.route("/update/avatar").patch(updateAvatar)
+router.route("/update/bio").patch(updateBio)
+router.route("/update/description").patch(updateDescription)
 
 export default router;

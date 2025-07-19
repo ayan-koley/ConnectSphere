@@ -228,8 +228,8 @@ const updateAvatar = asyncHandler(async(req, res) => {
         )
     )
 })
+
 export {
-    createProfile,
     updatefirstName,
     updatelastName,
     updateBio,

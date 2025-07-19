@@ -75,33 +75,27 @@ const authenticateWithClerk = asyncHandler(async(req, res) => {
     )
     
   } else if (evt.type === 'user.updated') {
-      const updatedUser = await User.findOneAndUpdate(
+    console.log("User updated is called when update user");
+    console.log("firstname and lastname are - ", first_name, last_name, image_url);
+      const updatedUser = await User.findOne(
         {
           clerkId: id
-        },
-        {
-          $set: [
-            {
-              image: image_url
-            }
-          ]
         }
       )
-      await UserProfile.findByIdAndUpdate(
-        {
-          _id: updatedUser._id
-        },
-        {
-          $set: [
-            {
-              firstName: first_name
-            },
-            {
-              lastName: last_name
-            }
-          ]
-        }
-      )
+      if(image_url) {
+        await updatedUser.save({image: image_url});
+      }
+      // await UserProfile.findByIdAndUpdate(
+      //   {
+      //     _id: updatedUser._id
+      //   },
+      //   {
+      //     $set: {
+      //       firstName: first_name,
+      //       lastName: last_name
+      //     }
+      //   }
+      // )
 
       return res
       .status(200)
