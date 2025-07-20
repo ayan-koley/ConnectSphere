@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
-import { generateUsername } from "../lib/generateUsername.js";
-import User from "../models/user.models.js";
-import UserProfile from "../models/userProfile.models.js";
-import { ApiError } from "../utils/ApiError.js";
-import { ApiResponse } from "../utils/ApiResponse.js";
-import { asyncHandler } from "../utils/asyncHandler.js";
+import { generateUsername } from "../../lib/generateUsername.js";
+import User from "../../models/user/user.models.js";
+import UserProfile from "../../models/user/userProfile.models.js";
+import { ApiError } from "../../utils/ApiError.js";
+import { ApiResponse } from "../../utils/ApiResponse.js";
+import { asyncHandler } from "../../utils/asyncHandler.js";
 import { Webhook } from 'svix'
 
 const authenticateWithClerk = asyncHandler(async(req, res) => {

@@ -1,9 +1,9 @@
 import mongoose from 'mongoose';
-import User from '../models/user.models.js';
-import UserProfile from "../models/userProfile.models.js";
-import { ApiError } from "../utils/ApiError.js";
-import { ApiResponse } from "../utils/ApiResponse.js";
-import { asyncHandler } from "../utils/asyncHandler.js";
+import User from '../../models/user/user.models.js';
+import UserProfile from "../../models/user/userProfile.models.js";
+import { ApiError } from "../../utils/ApiError.js";
+import { ApiResponse } from "../../utils/ApiResponse.js";
+import { asyncHandler } from "../../utils/asyncHandler.js";
 
 const updatefirstName = asyncHandler(async(req, res) => {
     const { firstName } = req.body;
@@ -229,10 +229,32 @@ const updateAvatar = asyncHandler(async(req, res) => {
     )
 })
 
+const getUserProfile = asyncHandler(async (req, res) => {
+    const user = await User.findOne({ clerkId: req.auth.userId });
+    if (!user) {  
+        throw new ApiError(404, "User not found");
+    }
+    const profile = await UserProfile.findOne({ userId: user._id });
+    if (!profile) {
+        throw new ApiError(404, "User profile not found");
+    }
+    return res
+    .status(200)
+    .json(
+        new ApiResponse(
+            200,
+            {
+                profile
+            },
+            "User profile fetched successfully"
+        )
+    );
+})
 export {
     updatefirstName,
     updatelastName,
     updateBio,
     updateDescription,
-    updateAvatar
+    updateAvatar,
+    getUserProfile
 }
