@@ -5,7 +5,7 @@ import UserSetting from "../../models/user/userSetting.models.js";
 import User from "../../models/user/user.models.js";
 
 const changeTheme = asyncHandler(async (req, res) => {
-  const user = await User.findOne({ clerkId: req.user.userId });
+  const user = await User.findOne({ clerkId: req.auth.userId });
   if (!user) {
     throw new ApiError(404, "User not found");
   }
@@ -26,7 +26,7 @@ const changeTheme = asyncHandler(async (req, res) => {
 
 const updateLanguage = asyncHandler(async (req, res) => {
   const { language } = req.body;
-  const user = await User.findOne({ clerkId: req.user.userId });
+  const user = await User.findOne({ clerkId: req.auth.userId });
   if (!user) {
     throw new ApiError(404, "User not found");
   }

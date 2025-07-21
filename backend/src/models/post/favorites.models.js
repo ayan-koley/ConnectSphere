@@ -10,7 +10,6 @@ const favoriteSchema = new Schema(
         postId: {
             type: Schema.Types.ObjectId,
             ref: "Post",
-            required: true
         }
     },
     {

@@ -26,9 +26,9 @@ const updatefirstName = asyncHandler(async(req, res) => {
     const updated_profile = await UserProfile.findOneAndUpdate(
         {userId: user._id },
         {
-            $set: [
-                {firstName}
-            ]
+            $set: {
+                firstName
+            }
         },
         {
             new: true
@@ -75,9 +75,9 @@ const updatelastName = asyncHandler(async(req, res) => {
     const updated_profile = await UserProfile.findOneAndUpdate(
         {userId: user._id },
         {
-            $set: [
-                {lastName}
-            ]
+            $set: {
+                lastName
+            }
         },
         {
             new: true
@@ -106,7 +106,7 @@ const updatelastName = asyncHandler(async(req, res) => {
 
 const updateBio = asyncHandler(async(req, res) => {
     const { bio } = req.body;
-    if(!fullName || fullName.trim() === '') {
+    if(!bio || bio.trim() === '') {
         throw new ApiError(
             400,
             "bio is required"
@@ -125,9 +125,10 @@ const updateBio = asyncHandler(async(req, res) => {
     const updated_profile = await UserProfile.findOneAndUpdate(
         {userId: user._id },
         {
-            $set: [
-                {bio}
-            ]
+            bio
+        },
+        {
+            new: true
         }
     )
 
@@ -169,11 +170,12 @@ const updateDescription = asyncHandler(async(req, res) => {
     }
     
     const updated_profile = await UserProfile.findOneAndUpdate(
-        {userId: user._id },
+        { userId: user._id },
         {
-            $set: [
-                {description}
-            ]
+            description
+        },
+        {
+            new: true
         }
     )
 
@@ -196,38 +198,6 @@ const updateDescription = asyncHandler(async(req, res) => {
     )
 })
 
-// update Image where image filed have User model
-const updateAvatar = asyncHandler(async(req, res) => {
-
-    const image = req.file.avatar;
-    const imagekitUrl = "image url here";
-    const user = await User.findOneAndUpdate(
-        {
-            clerkId: req?.auth?.userId
-        },
-        {
-            $set: [
-                {
-                    image: imagekitUrl
-                }
-            ]
-        }
-    )
-    if(!user) {
-        throw new ApiError(
-            404,
-            "Unauthorized user"
-        )
-    }
-    return res
-    .status(200)
-    .json(
-        new ApiResponse(
-            200,
-            "Successfully Change Avatar"
-        )
-    )
-})
 
 const getUserProfile = asyncHandler(async (req, res) => {
     const user = await User.findOne({ clerkId: req.auth.userId });
@@ -255,6 +225,5 @@ export {
     updatelastName,
     updateBio,
     updateDescription,
-    updateAvatar,
     getUserProfile
 }

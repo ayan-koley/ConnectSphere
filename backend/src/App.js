@@ -9,26 +9,31 @@ app.use(
     secretKey: process.env.CLERK_SECRET_KEY,
   })
 );
+app.use(express.urlencoded({extended: true}))
 
 import authRouter from "./routes/user/auth.routes.js";
 import userProfileRouter from "./routes/user/userProfile.routes.js";
-import userSettingRouter from "./routes/user/user/userSetting.routes.js";
+import userSettingRouter from "./routes/user/userSetting.routes.js";
 import followRelationshipRouter from "./routes/user/followRelationhip.routes.js";
 import postRouter from './routes/post/post.routes.js';
 import likeRouter from './routes/post/like.routes.js';
 import postFavoriteRouter from './routes/post/favorite.routes.js';  
 import postViewRouter from './routes/post/postView.routes.js';
 import commentRouter from './routes/post/comment.routes.js';
+import searchRouter from './routes/search/search.routes.js';
+import feddRouter from './routes/feed/feed.routes.js';
 
 
-app.use("/api/v1/webhook", authRouter);
+app.use("/api/v1/webhook", authRouter); 
 app.use("/api/v1/user/profile", userProfileRouter);
-app.use("/api/v1/user/setting", userSettingRouter);
-app.use("/api/v1/relation", followRelationshipRouter);
-app.use("/api/v1/post", postRouter);
-app.use("/api/v1/like", likeRouter);
-app.use("/api/v1/post/favorite", postFavoriteRouter);
-app.use("/api/v1/post/view", postViewRouter);
-app.use("/api/v1/post/comment", commentRouter);
+app.use("/api/v1/user/setting", userSettingRouter); 
+app.use("/api/v1/relation", followRelationshipRouter); 
+app.use("/api/v1/post", postRouter); 
+app.use("/api/v1/like", likeRouter); 
+app.use("/api/v1/post/favorite", postFavoriteRouter); 
+app.use("/api/v1/post/view", postViewRouter); 
+app.use("/api/v1/post/comment", commentRouter); 
+app.use("/api/v1/search", searchRouter),
+app.use("/api/v1/feed", feddRouter);
 
 export { app };

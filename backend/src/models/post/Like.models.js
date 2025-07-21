@@ -9,12 +9,10 @@ const likeSchema = new Schema(
         postId: {
             type: Schema.Types.ObjectId,
             ref: "Post",
-            required: true
         },
         commentId: {
             type: Schema.Types.ObjectId,
             ref: "Comment",
-            required: true
         }
     }
 )

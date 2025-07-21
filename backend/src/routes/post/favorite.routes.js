@@ -1,12 +1,12 @@
 import { Router } from "express";
-import { toggleFavoritePost, getUserFavorites } from "../../controllers/post/favorite.controllers";
-import { requiredAuth } from "../../middlewares/requiredAuth";
+import { toggleFavoritePost, getUserFavorites } from "../../controllers/post/favorite.controllers.js";
+import { requiredAuth } from "../../middlewares/requiredAuth.js";
 const router = Router();
 
-router.use(requiredAuth());
+router.use(requiredAuth);
 
-router.post("/post/:postId", toggleFavoritePost);
-router.get("/user", getUserFavorites);
+router.route("/:postId").post( toggleFavoritePost);
+router.route("/user").get(getUserFavorites);
 
 
 export default router;

@@ -2,19 +2,37 @@ import { ApiError } from "../../utils/ApiError.js";
 import { ApiResponse } from "../../utils/ApiResponse.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import FollowRelationship from "../../models/user/followRelationship.js";
+import mongoose from "mongoose";
+import User from "../../models/user/user.models.js";
 
 const followUser = asyncHandler(async (req, res) => {
-    const { followedUserId } = req.body;
-    const userId = req.auth.userId;
+    const { followedUserId } = req.params;
+    const user = await User.findOne({
+        clerkId: req.auth.userId
+    })
+    if(!user) {
+        throw new ApiError(
+            400,
+            "User is not found in dbs"
+        )
+    }
 
     if (!followedUserId) {
         throw new ApiError(400, "Followed user ID is required");
     }
 
+    const isFollowedUserId = await User.findById(followedUserId);
+    if(!isFollowedUserId) {
+        throw new ApiError(
+            400,
+            "Invalid followedUserId"
+        )
+    }
+
     // Check if the follow relationship already exists
     const existingFollow = await FollowRelationship.findOne({
-        userId,
-        followedUserId
+        userId: new mongoose.Types.ObjectId(followedUserId),
+        followedUserId: user._id
     });
 
     if (existingFollow) {
@@ -22,17 +40,25 @@ const followUser = asyncHandler(async (req, res) => {
     }
 
     // Create a new follow relationship
-    const newFollow = await FollowRelationship.create({
-        userId,
-        followedUserId
+    await FollowRelationship.create({
+        userId: new mongoose.Types.ObjectId(followedUserId),
+        followedUserId: user._id
     });
 
     return res.status(201).json(new ApiResponse(201, "User followed successfully"));
 });
 
 const unfollowUser = asyncHandler(async (req, res) => {
-    const { followedUserId } = req.body;
-    const userId = req.auth.userId;
+    const { followedUserId } = req.params;
+    const user = await User.findOne({
+        clerkId: req.auth.userId
+    })
+    if(!user) {
+        throw new ApiError(
+            400,
+            "User is not found in dbs"
+        )
+    }
 
     if (!followedUserId) {
         throw new ApiError(400, "Followed user ID is required");
@@ -40,8 +66,8 @@ const unfollowUser = asyncHandler(async (req, res) => {
 
     // Find the follow relationship to delete
     const followRelationship = await FollowRelationship.findOneAndDelete({
-        userId,
-        followedUserId
+        userId: new mongoose.Types.ObjectId(followedUserId),
+        followedUserId: user._id
     });
 
     if (!followRelationship) {
@@ -52,11 +78,11 @@ const unfollowUser = asyncHandler(async (req, res) => {
 });
 
 const getFollowers = asyncHandler(async (req, res) => {
-    const userId = req.auth.userId;
+    const { userId } = req.params;
 
     // Find all users that follow the authenticated user
-    const followers = await FollowRelationship.find({ followedUserId: userId })
-        .populate('userId', 'username image');
+    const followers = await FollowRelationship.find({ userId })
+        .populate('followedUserId', 'username image');
 
     return res
     .status(200)
@@ -70,10 +96,10 @@ const getFollowers = asyncHandler(async (req, res) => {
 });
 
 const getFollowing = asyncHandler(async (req, res) => {
-    const userId = req.auth.userId;
+    const { userId } = req.params;
 
     // Find all users that the authenticated user is following
-    const following = await FollowRelationship.find({ userId })
+    const following = await FollowRelationship.find({ followedUserId: userId })
         .populate('followedUserId', 'username image');
 
     return res

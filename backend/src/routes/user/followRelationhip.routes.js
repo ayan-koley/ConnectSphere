@@ -1,13 +1,13 @@
 import { Router } from "express";
-import { followUser, unfollowUser, getFollowers, getFollowing } from "../../controllers/user/followRelationship.controllers";
+import { followUser, unfollowUser, getFollowers, getFollowing } from "../../controllers/user/followRelationship.controllers.js";
 import { requiredAuth } from "../../middlewares/requiredAuth.js";
 const router = Router();
 
-router.use(requiredAuth());
+router.use(requiredAuth);
 
-router.post("/follow/:userId", followUser);
-router.post("/unfollow/:userId", unfollowUser);
-router.get("/followers/:userId", getFollowers);
-router.get("/following/:userId", getFollowing);
+router.route("/follow/:followedUserId").post(followUser);
+router.route("/unfollow/:followedUserId").post(unfollowUser);
+router.route("/followers/:userId").get(getFollowers);
+router.route("/following/:userId").get(getFollowing);
 
 export default router;

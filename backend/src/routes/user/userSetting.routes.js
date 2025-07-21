@@ -9,7 +9,7 @@ import {
 
 const router = Router();
 
-router.use(requiredAuth());
+router.use(requiredAuth);
 
 router.route("/").get(getUserSetting);
 router.route("/toggle/theme").patch(changeTheme);

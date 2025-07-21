@@ -9,7 +9,7 @@ var imagekit = new ImageKit({
 
 const uploadFile = async(fileArray = [], userId) => {
     const uploads = await Promise.all(fileArray.map((file) => {
-        const fileBuffer = fs.readdirSync(file.path);
+        const fileBuffer = fs.readFileSync(file.path);
         try {
             return imagekit.upload(
             {

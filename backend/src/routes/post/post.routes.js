@@ -1,10 +1,15 @@
 import { Router } from "express";
-import { createPost, updatePost } from "../../controllers/post/post.controllers";
-import { requiredAuth } from "../../middlewares/requiredAuth";
-import { upload } from "../../middlewares/multer.middlewares";
+import { createPost, updatePost, deletePost } from "../../controllers/post/post.controllers.js";
+import { requiredAuth } from "../../middlewares/requiredAuth.js";
+import { upload } from "../../middlewares/multer.middlewares.js";
+import { IP } from "../../middlewares/location.middlewares.js";
 const router = Router();
 
-router.route("/create").post( upload.array('fileArray', 5) ,requiredAuth, createPost);
-router.route("/update/:postId").patch(requiredAuth, updatePost);
+router.use(IP);
+router.use(requiredAuth);
+
+router.route("/create").post( upload.array('files', 5) , createPost);
+router.route("/update/:postId").patch(updatePost);
+router.route("/delete/:postId").delete(deletePost)
 
 export default router;

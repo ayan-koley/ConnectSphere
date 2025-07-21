@@ -1,4 +1,4 @@
-import { Schema, model, models } from 'mongoose';
+import { Schema, model } from 'mongoose';
 
 const userSettingSchema = new Schema(
     {
@@ -23,5 +23,5 @@ const userSettingSchema = new Schema(
     }
 )
 
-const UserSetting = models.UserSetting || model('UserSetting', userSettingSchema);
+const UserSetting =  model('UserSetting', userSettingSchema);
 export default UserSetting;

@@ -6,6 +6,12 @@ import { ApiError } from "../../utils/ApiError.js";
 import { ApiResponse } from "../../utils/ApiResponse.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import { Webhook } from 'svix'
+import UserSetting from "../../models/user/userSetting.models.js";
+import Post from "../../models/post/post.models.js";
+import Like from "../../models/post/Like.models.js";
+import Favorite from "../../models/post/favorites.models.js";
+import FollowRelationship from "../../models/user/followRelationship.js";
+import PostView from '../../models/post/postView.models.js';
 
 const authenticateWithClerk = asyncHandler(async(req, res) => {
   // generate payload and svix header for webhook connections
@@ -20,7 +26,7 @@ const authenticateWithClerk = asyncHandler(async(req, res) => {
   const wh = new Webhook(secrect);
   const evt = wh.verify(payload, svixHeaders); // verify webhook
   
-
+  console.log("evt is - ", evt);
 
   const {id, email_addresses, image_url, external_accounts, first_name, last_name, username } = evt.data;
 
@@ -63,8 +69,10 @@ const authenticateWithClerk = asyncHandler(async(req, res) => {
       description: ""
     })
 
-
-
+    await UserSetting.create({
+      userId: newUser._id
+    })
+    
     return res
     .status(200)
     .json(
@@ -109,14 +117,62 @@ const authenticateWithClerk = asyncHandler(async(req, res) => {
       // user -> user profile -> post -> like -> comment -> user setting -> favorites -> postviews -> relationship
 
       const deletedUser = await User.findOneAndDelete({
-        clerkId: id
+        clerkId: evt.data.id
       });
       await UserProfile.findOneAndDelete({userId: deletedUser._id});
-      // TODO: due deltes work
+      await UserSetting.findOneAndDelete({
+        userId: deletedUser._id
+      })
+      const posts = await Post.find(
+        {
+          userId: deletedUser._id
+        }
+      )
+      posts?.map(async (post) => {
+        const postId = post._id;
+        // delete all photos form imagekit
+        post.media?.map(async(f) => {
+            await deleteFile(f.fileId);
+        })
+        // delete comment
+        await Comment.deleteMany({
+            postId
+        })
+        // delete likes
+        await Like.deleteMany({
+            postId
+        })
+        // delete favorites
+        await Favorite.deleteOne({
+            postId
+        }),
+        // delete postView
+        await PostView.deleteOne({
+            postId
+        })
+      })
+
+      await FollowRelationship.deleteMany({
+        $or: [
+          {
+            userId: deletedUser._id
+          },
+          {
+            followedUserId: deletedUser._id
+          }
+        ]
+      })
+
+      return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          "User delted successfully"
+        )
+      )
   }
-
 });
-
 
 const usernameAvailable = async(username) => {
   try {
@@ -128,4 +184,5 @@ const usernameAvailable = async(username) => {
     )
   }
 }
+
 export { authenticateWithClerk, usernameAvailable };

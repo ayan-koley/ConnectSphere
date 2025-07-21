@@ -1,8 +1,14 @@
 import Post from "../../models/post/post.models.js";
-import User from "../../models/user/user.models.js";
+import PostView from "../../models/post/postView.models.js";
+import User from '../../models/user/user.models.js';
+import Comment from '../../models/post/comment.models.js';
+import Like from '../../models/post/Like.models.js';
+import Favorite from '../../models/post/favorites.models.js';
+import PostView from "../../models/post/postView.models.js";
 import { ApiError } from "../../utils/ApiError.js";
 import { ApiResponse } from "../../utils/ApiResponse.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
+import { deleteFile, uploadFile } from "../../utils/imagekit.js";
 
 const createPost = asyncHandler(async(req, res) => {
     const { description, ...data } = req.body;
@@ -21,11 +27,16 @@ const createPost = asyncHandler(async(req, res) => {
         )
     }
 
+    
     const newPost = await Post.create(
         {
             userId: user._id,
             description: description,
-            ...data
+            ...data,
+            location: {
+                "type": "Point",
+                "coordinates": [req.coordinates?.longitude, req.coordinates?.latitude]
+            }
         }
     )
     if(!newPost) {
@@ -34,6 +45,19 @@ const createPost = asyncHandler(async(req, res) => {
             "Unable to create post"
         )
     }
+    
+    const files = (await uploadFile(req.files, newPost._id)).map((file) => {
+        return {
+            url: file.url,
+            fileId: file.fileId
+        }
+    });
+    newPost.media = files;
+    await newPost.save();
+
+    await PostView.create({
+        postId: newPost._id
+    })
 
     return res
     .status(200)
@@ -96,12 +120,49 @@ const updatePost = asyncHandler(async(req, res) => {
     )
 })
 
-// TODO: get all post that work on later
-
 // delete post is on working stage;
+const deletePost = asyncHandler(async(req, res) => {
+    const { postId } = req.params;
+    const post = await Post.findByIdAndDelete(postId);
+    if(!post) {
+        throw new ApiError(
+            400,
+            "Invalid postId"
+        )
+    }
+    // delete all photos form imagekit
+    post.media?.map(async(f) => {
+        await deleteFile(f.fileId);
+    })
+    // delete comment
+    await Comment.deleteMany({
+        postId
+    })
+    // delete likes
+    await Like.deleteMany({
+        postId
+    })
+    // delete favorites
+    await Favorite.deleteOne({
+        postId
+    }),
+    // delete postView
+    await PostView.deleteOne({
+        postId
+    })
 
+    return res
+    .status(200)
+    .json(
+        new ApiResponse(
+            200,
+            "Post and some dependencies are deleted"
+        )
+    )
+})
 
 export {
     createPost,
-    updatePost
+    updatePost,
+    deletePost
 }

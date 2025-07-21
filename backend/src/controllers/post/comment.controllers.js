@@ -1,10 +1,12 @@
-import { ApiError } from "../../utils/ApiError";
-import { ApiResponse } from "../../utils/ApiResponse";
-import { asyncHandler } from "../../utils/asyncHandler";
-import Comment from "../../models/post/comment.models";
-import User from "../../models/user/user.models";
+import { ApiError } from "../../utils/ApiError.js";
+import { ApiResponse } from "../../utils/ApiResponse.js";
+import { asyncHandler } from "../../utils/asyncHandler.js";
+import Comment from "../../models/post/comment.models.js";
+import User from "../../models/user/user.models.js";
+import Like from "../../models/post/Like.models.js";
 
 const createComment = asyncHandler(async(req, res) => {
+    const { postId } = req.params;
     const { content } = req.body;
     if(!content) {
         throw new ApiError(400, "Comment is required");
@@ -15,7 +17,7 @@ const createComment = asyncHandler(async(req, res) => {
     }
     const newComment = await Comment.create({
         postId,
-        user: user._id,
+        userId: user._id,
         content
     });
     return res
@@ -68,7 +70,12 @@ const deleteComment = asyncHandler(async(req, res) => {
     if (!comment) {
         throw new ApiError(404, "Comment not found");
     }
-    
+    // delete likes on this comments
+    await Like.deleteMany(
+        {
+            commentId: comment._id
+        }
+    )
     return res
     .status(200)
     .json(

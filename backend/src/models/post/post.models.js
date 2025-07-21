@@ -7,7 +7,7 @@ const locationSchema = new Schema({
         enum: ["Point"],
         default: "Point"
     },
-    cordinates: {
+    coordinates: {
         type: [Number],
         validate: {
             validator: function(v) {
@@ -30,10 +30,11 @@ const PostSchema = new Schema({
     },
     media: [
         {
+            _id: false,
             url: {
                 type: String
             },
-            file_id: {
+            fileId: {
                 type: String
             }
             
@@ -46,8 +47,10 @@ const PostSchema = new Schema({
         type: [String],
     },
     mention: {
-        type: [Schema.Types.ObjectId], 
-        ref: 'User',
+        type: [{
+            type: Schema.Types.ObjectId,
+            ref: "User"
+        }],
     },
     location: {
         type: locationSchema

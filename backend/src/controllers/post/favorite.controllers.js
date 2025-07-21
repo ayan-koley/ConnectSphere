@@ -4,8 +4,9 @@ import { asyncHandler } from "../../utils/asyncHandler.js";
 import Favorite from "../../models/post/favorites.models.js";
 import User from "../../models/user/user.models.js";
 
+
 const toggleFavoritePost = asyncHandler(async (req, res) => {
-    const { postId } = req.body;
+    const { postId } = req.params;
     if (!postId) {
         throw new ApiError(400, "Post ID is required");
     }
