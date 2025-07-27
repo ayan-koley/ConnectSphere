@@ -1,7 +1,7 @@
 import { ApiError } from "../../utils/ApiError.js";
 import { ApiResponse } from "../../utils/ApiResponse.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
-import FollowRelationship from "../../models/user/followRelationship.js";
+import FollowRelationship from "../../models/user/followRelationship.models.js";
 import mongoose from "mongoose";
 import User from "../../models/user/user.models.js";
 

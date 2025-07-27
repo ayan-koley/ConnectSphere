@@ -55,6 +55,8 @@ const PostSchema = new Schema({
     location: {
         type: locationSchema
     }
+}, {
+    timestamps: true
 });
 
 PostSchema.index( { hashtag: 1 });

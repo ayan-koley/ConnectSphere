@@ -198,13 +198,46 @@ const updateDescription = asyncHandler(async(req, res) => {
     )
 })
 
-
 const getUserProfile = asyncHandler(async (req, res) => {
     const user = await User.findOne({ clerkId: req.auth.userId });
     if (!user) {  
         throw new ApiError(404, "User not found");
     }
-    const profile = await UserProfile.findOne({ userId: user._id });
+    const profile = await User.aggregate([
+        {
+            $match: {
+                _id: user._id,
+                
+            },
+        },
+        {
+            $lookup: {
+                from: "userprofiles",
+                foreignField: "userId",
+                localField: "_id",
+                as: "profileDetails",
+                pipeline: [
+                    {
+                        $project: {
+                            username: 1,
+                            lastName: 1,
+                            firstName: 1,
+                            bio: 1,
+                            description: 1,
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            $project: {
+                email: 1,
+                image: 1,
+                _id: 1,
+                profileDetails: 1
+            }
+        }
+    ]);
     if (!profile) {
         throw new ApiError(404, "User profile not found");
     }
@@ -213,13 +246,13 @@ const getUserProfile = asyncHandler(async (req, res) => {
     .json(
         new ApiResponse(
             200,
-            {
-                profile
-            },
+            profile[0],
             "User profile fetched successfully"
         )
     );
 })
+
+
 export {
     updatefirstName,
     updatelastName,

@@ -80,6 +80,64 @@ const searchPost = asyncHandler(async(req, res) => {
     )
 })
 
+const searchUserbyUsername = asyncHandler(async(req, res) => {
+    const { username } = req.query;
+    
+    const users = await UserProfile.aggregate([
+        {
+            $match: {
+                username: { $regex: username, $options: "i"}
+            }
+        },
+        {
+            $lookup: {
+                from: "users",
+                foreignField: "_id",
+                localField: "userId",
+                as: "avatar",
+                pipeline: [
+                    {
+                        $project: {
+                            _id: 0,
+                            image: 1
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            $addFields: {
+                avatar: {
+                    $first: "$avatar"
+                }
+            }
+        },
+        {
+            $project: {
+                _id: 1,
+                userId: 1,
+                username: 1,
+                firstName: 1,
+                lastName: 1
+            }
+        },
+        {
+            $limit: 10
+        }
+    ])
+
+    return res
+    .status(200)
+    .json(
+        new ApiResponse(
+            200,
+            users,
+            "Successfully fetched users based on username"
+        )
+    )
+})
+
 export {
-    searchPost
+    searchPost,
+    searchUserbyUsername
 }

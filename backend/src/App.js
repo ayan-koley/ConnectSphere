@@ -1,5 +1,6 @@
 import express from "express";
 import { clerkMiddleware } from "@clerk/express";
+import cors from 'cors'
 const app = express();
 
 app.use(express.json());
@@ -10,6 +11,13 @@ app.use(
   })
 );
 app.use(express.urlencoded({extended: true}))
+// app.use()
+
+const corsOptions = {
+  origin: "http://localhost:5173",
+  credentials: true
+}
+app.use(cors(corsOptions))
 
 import authRouter from "./routes/user/auth.routes.js";
 import userProfileRouter from "./routes/user/userProfile.routes.js";
@@ -22,6 +30,7 @@ import postViewRouter from './routes/post/postView.routes.js';
 import commentRouter from './routes/post/comment.routes.js';
 import searchRouter from './routes/search/search.routes.js';
 import feddRouter from './routes/feed/feed.routes.js';
+import healthCheckRouter from './routes/healthcheck.routes.js';
 
 
 app.use("/api/v1/webhook", authRouter); 
@@ -35,5 +44,6 @@ app.use("/api/v1/post/view", postViewRouter);
 app.use("/api/v1/post/comment", commentRouter); 
 app.use("/api/v1/search", searchRouter),
 app.use("/api/v1/feed", feddRouter);
+app.use("/api/v1", healthCheckRouter);
 
 export { app };

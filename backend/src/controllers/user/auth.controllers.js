@@ -10,7 +10,7 @@ import UserSetting from "../../models/user/userSetting.models.js";
 import Post from "../../models/post/post.models.js";
 import Like from "../../models/post/Like.models.js";
 import Favorite from "../../models/post/favorites.models.js";
-import FollowRelationship from "../../models/user/followRelationship.js";
+import FollowRelationship from "../../models/user/followRelationship.models.js";
 import PostView from '../../models/post/postView.models.js';
 
 const authenticateWithClerk = asyncHandler(async(req, res) => {
@@ -83,8 +83,6 @@ const authenticateWithClerk = asyncHandler(async(req, res) => {
     )
     
   } else if (evt.type === 'user.updated') {
-    console.log("User updated is called when update user");
-    console.log("firstname and lastname are - ", first_name, last_name, image_url);
       const updatedUser = await User.findOne(
         {
           clerkId: id
