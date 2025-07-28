@@ -87,7 +87,7 @@ const deleteComment = asyncHandler(async(req, res) => {
 });
 
 const getCommentsByPostId = asyncHandler(async(req, res) => {
-    const postId = req.params.postId;
+    const {postId} = req.params;
     if (!postId) {
         throw new ApiError(400, "Post ID is required");
     }
@@ -103,6 +103,7 @@ const getCommentsByPostId = asyncHandler(async(req, res) => {
         )
     );
 })
+
 export {
     createComment,
     updateComment,

@@ -31,6 +31,7 @@ import commentRouter from './routes/post/comment.routes.js';
 import searchRouter from './routes/search/search.routes.js';
 import feddRouter from './routes/feed/feed.routes.js';
 import healthCheckRouter from './routes/healthcheck.routes.js';
+import dashboardRouter from './routes/dashboard/dashboard.routes.js';
 
 
 app.use("/api/v1/webhook", authRouter); 
@@ -45,5 +46,6 @@ app.use("/api/v1/post/comment", commentRouter);
 app.use("/api/v1/search", searchRouter),
 app.use("/api/v1/feed", feddRouter);
 app.use("/api/v1", healthCheckRouter);
+app.use("/api/v1/dashboard", dashboardRouter);
 
 export { app };

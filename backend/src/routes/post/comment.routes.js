@@ -3,9 +3,13 @@ import { createComment, updateComment, getCommentsByPostId, deleteComment } from
 import { requiredAuth } from "../../middlewares/requiredAuth.js";
 const router = Router();
 
-router.route("/:postId").post(requiredAuth, createComment);
-router.route("/update/:commentId").patch(requiredAuth, updateComment);
-router.route("/post/:postId").get(getCommentsByPostId);
-router.route("delete/:commentId").delete(requiredAuth, deleteComment);
+
+router.route("/:postId").get(getCommentsByPostId);
+
+router.use(requiredAuth);
+
+router.route("/:postId").post(createComment);
+router.route("/update/:commentId").patch(updateComment);
+router.route("delete/:commentId").delete(deleteComment);
 
 export default router;
