@@ -11,8 +11,6 @@ const globalFeed = asyncHandler(async(req, res) => {
     const longitude = req.coordinates?.longitude;
     const latitude = req.coordinates?.latitude;
     
-    const auth = getAuth(req);
-    req.auth = auth;
 
     const locationPosts = await Post.aggregate([
         {

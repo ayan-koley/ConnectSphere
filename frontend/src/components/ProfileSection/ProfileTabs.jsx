@@ -69,9 +69,9 @@ const ProfileTabs = () => {
             <TabsContent value="posts" className="mt-8">
                 <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 gap-6">
                 {posts.map((post) => (
-                    <Link key={post.id} to={`/post/${post._id}`}>
+                    <div key={post.id}>
                         <PostCard post={post} />
-                    </Link>
+                    </div>
                 ))}
                 </div>
             </TabsContent>
@@ -79,9 +79,9 @@ const ProfileTabs = () => {
             <TabsContent value="tagged" className="mt-8">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {mentionPost.map((post) => (
-                    <Link key={post.id} to={`/post/${post._id}`}>
+                    <div key={post.id}>
                         <PostCard post={post} />
-                    </Link>
+                    </div>
                 ))}
                 </div>
             </TabsContent>

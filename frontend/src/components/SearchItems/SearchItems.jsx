@@ -44,17 +44,25 @@ const SearchItems = () => {
                                     </div>
                                 </div>
                             </Link>
-                        )) : 'Not Found'}
+                        )) : (
+                            <div className='w-full h-screen flex items-center justify-center'>
+                                <h1>User Not Found</h1>
+                            </div>
+                        )}
                     </div>
                 </TabsContent>
 
                 <TabsContent value="posts" className="mt-8">
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {posts.length > 0 ? posts.map((post) => (
-                        <Link key={post._id} to={`/post/${post._id}`}>
+                        <div key={post._id} >
                             <PostCard post={post} />
-                        </Link>
-                    )) : "Not Found"}
+                        </div>
+                    )) : (
+                        <div className='w-full h-screen flex items-center justify-center'>
+                            <h1>Post Not Found</h1>
+                        </div>
+                    )}
                     </div>
                 </TabsContent>
             </Tabs>

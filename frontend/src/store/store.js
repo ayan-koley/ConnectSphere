@@ -13,7 +13,7 @@ const store = configureStore({
         searchHistory: searchHistorySlice,
         search: searchSlice,
         feedSlice,
-        commentSlice
+        comments: commentSlice
     }
 })
 

@@ -8,7 +8,7 @@ import { toast } from 'react-hot-toast'
 import { useEffect } from 'react';
 import { useAuth } from '@clerk/clerk-react'
 
-const LikeButton = ({totalLikes=0, userId, id, type="post"}) => {
+const LikeButton = ({totalLikes=0, id, type="post"}) => {
     const [isLiked, setIsLiked] = useState(false);
     const[isPending, startTransition] = useTransition();
     const [likes, setLikes] = useState(totalLikes);
@@ -23,7 +23,6 @@ const LikeButton = ({totalLikes=0, userId, id, type="post"}) => {
                             Authorization: `Bearer ${token}`
                         }
                     }).then(res => res.data);
-                    console.log("FetchedLike status ", response);
                     setIsLiked(response.data);
                 } catch (err) {
                     toast.error(err.message);

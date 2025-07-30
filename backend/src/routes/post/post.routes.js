@@ -10,8 +10,8 @@ router.route("/:postId").get(getPostById)
 router.route("/user/:userId").get(getUserAllPost)
 router.route("/user/mention/:userId").get(getAllMentionPosts)
 
-router.use(IP);
 router.use(requiredAuth);
+router.use(IP);
 
 router.route("/create").post( upload.array('files', 5) , createPost);
 router.route("/update/:postId").patch(updatePost);

@@ -6,8 +6,9 @@ export const fetchComment = createAsyncThunk(
     async(postId) => {
         try {
         
-            const response = await axios.get(`${import.meta.env.VITE_DB_URI}/api/v1/post/comment/${postId}`).then(res => res.data);
-            return {postId, comment: response.comment};
+            const response = await axios.get(`${import.meta.env.VITE_DB_URI}/api/v1/comment/post/${postId}`).then(res => res.data);
+            console.log("comment response ", response);
+            return {postId, comment: response.data};
         } catch (error) {
             console.error(error.message);
         }

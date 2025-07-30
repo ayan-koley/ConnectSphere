@@ -8,10 +8,11 @@ import { PulseLoader } from 'react-spinners';
 import { addComment } from '../../store/commentSlice';
 import { Input } from "@/components/ui/input"
 import {Button} from '@/components/ui/button.tsx'
+import toast from 'react-hot-toast';
 
 const CreateComment = () => {
     const { postId } = useParams();
-    const { register, handleSubmit, formState: { errors } } = useForm();
+    const { register, handleSubmit, formState: { errors }, setValue } = useForm();
     const [isPending, startTransition] = useTransition();
     const {getToken} = useAuth();
     const dispatch = useDispatch();
@@ -23,19 +24,19 @@ const CreateComment = () => {
                 formData.append('content', data.content);
                 console.log(formData.content);
                 const token = await getToken();
-                const response = await axios.post(`http://localhost:5000/api/v1/post/comment/${postId}`, formData, {
+                const response = await axios.post(`${import.meta.env.VITE_DB_URI}/api/v1/comment/post/${postId}`, formData, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     }
                 }).then(res => res.data);
                 console.log("Comment create ", response);
+                setValue('content', '');
                 dispatch(addComment({
                     postId,
                     comment: response.comment
                 }))
-
             } catch (err) {
-                
+                toast.error(err.message);
             }
         })
     }

@@ -15,19 +15,21 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import PostMediaCard from '../PostMediaCard/PostMediaCard'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'react-hot-toast'
 import axios from 'axios'
 import PostViewerSkeleton from '../Skeleton/PostViewerSkeleton'
 import LikeButton from '../LikeButton'
 import { useSelector } from 'react-redux'
 import CreateComment from '../Comment/CreateComment'
+import FavoriteButton from '../FavoriteButton'
 
 
 const PostViewer = () => {
     const { postId } = useParams();
     const [post, setPost] = useState({});
     const userData = useSelector(state => state.authSlice.userData);
+    const navigate = useNavigate();
 
 
     const fetchPostData = async() => {
@@ -53,7 +55,9 @@ return Object.keys(post).length > 0 ? (
             <div className="p-4">
                 {/* Author Info */}
                 <div className="flex items-start gap-3 mb-3">
-                    <AuthAvatar src={post.avatar?.image} className={'h-12 w-12'}  />
+                    <div onClick={() => navigate(`/profile/${post.userId}`)}>
+                        <AuthAvatar src={post.avatar?.image} className={'h-12 w-12'}  />
+                    </div>
                     <div className="flex-1">
                         <div className="flex items-center gap-2">
                         <h3 className="font-bold text-base">Ayan</h3>
@@ -63,11 +67,11 @@ return Object.keys(post).length > 0 ? (
                         </div>
                         <p className="text-muted-foreground text-sm">{post.userDetails?.username}</p>
                     </div>
-                    {/* <DropdownMenu >
+                    <DropdownMenu >
                         <DropdownMenuTrigger>
-                            <Button variant="ghost" size="icon" className="hover:bg-social-hover cursor-pointer">
+                            <div variant="ghost" size="icon" className="hover:bg-social-hover cursor-pointer">
                                 <MoreHorizontal className="h-4 w-4" />
-                            </Button>
+                            </div>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>
                             <DropdownMenuItem className="cursor-pointer">
@@ -79,7 +83,7 @@ return Object.keys(post).length > 0 ? (
                                 Delete Post
                             </DropdownMenuItem>
                         </DropdownMenuContent>
-                    </DropdownMenu> */}
+                    </DropdownMenu>
                     
                 </div>
 
@@ -98,9 +102,7 @@ return Object.keys(post).length > 0 ? (
                         <MessageCircle className="mr-2 h-4 w-4" />
                         {post.totalComments}
                     </Button>
-                    <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary">
-                        <HeartPlus className={`mr-2 h-4 w-4 `} />
-                    </Button>
+                    <FavoriteButton postId={post._id} />
                 </div>
             </div>
 

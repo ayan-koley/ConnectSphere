@@ -5,11 +5,12 @@ import { Heart } from 'lucide-react'
 import AuthAvatar from '../Header/AuthAvatar'
 import toast from 'react-hot-toast'
 import axios from 'axios'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { fetchComment } from '../../store/commentSlice'
+import LikeButton from '../LikeButton'
 const Comment = ({postId}) => {
 
-    const [comments, setComments] = useState([]);
+    const comments = useSelector(state => state.comments.byPostId[postId]);
     const dispatch = useDispatch();
     const getComment = async() => {
         try {
@@ -27,35 +28,30 @@ const Comment = ({postId}) => {
     }, [])
 
 
-  return comments && comments.length > 0 ? (
+  return comments && comments.length > 0 && (
     <div>
         <div className="divide-y divide-border">
-                {samplePost.replies.map((reply) => (
-                    <Card key={reply.id} className="border-0 rounded-none">
+                {comments?.map((comment) => (
+                    <Card key={comment.id} className="border-0 rounded-none">
                     <div className="p-4">
                         <div className="flex items-start gap-3">
-                        <AuthAvatar src={"https://res.cloudinary.com/dlcxr1p9c/image/upload/v1723636083/samples/man-portrait.jpg"} className={'h-10 w-10'} />
+                        <AuthAvatar src={comment.user.image} className={'h-10 w-10'} />
                         <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-1">
-                            <h4 className="font-semibold text-sm">{reply.author.name}</h4>
-                            <span className="text-muted-foreground text-sm">@{reply.author.username}</span>
+                            <h4 className="font-semibold text-sm">{comment.userDetails.firstName} {comment.userDetails.lastName}</h4>
+                            <span className="text-muted-foreground text-sm">@{comment.userDetails.username}</span>
                             <span className="text-muted-foreground text-sm">·</span>
-                            <span className="text-muted-foreground text-sm">{reply.timestamp}</span>
+                            <span className="text-muted-foreground text-sm">{comment.createdAt}</span>
                             </div>
-                            <p className="text-foreground text-sm leading-relaxed">{reply.content}</p>
+                            <p className="text-foreground text-sm leading-relaxed">{comment.content}</p>
                         </div>
-                        <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary">
-                            <Heart className="mr-2 h-4 w-4" />
-                            10
-                        </Button>
+                            <LikeButton id={comment._id} totalLikes={comment.totalLikes} type='comment' />
                         </div>
                     </div>
                     </Card>
                 ))}
             </div>
     </div>
-  ) : (
-    <div>Noting</div>
   )
 }
 

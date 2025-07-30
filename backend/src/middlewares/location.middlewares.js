@@ -14,7 +14,7 @@ export const IP = async(req, res, next) => {
                             req.coordinates = null;
                             return next()
                         });
-    const [ latitude, longitude ] = geoLocation.loc.split(",")
+    const [ latitude, longitude ] = geoLocation.loc?.split(",")
     req.coordinates = {
         latitude: parseFloat(latitude),
         longitude: parseFloat(longitude)

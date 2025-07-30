@@ -5,14 +5,22 @@ import axios from 'axios';
 import { toggleMode } from '../../store/themeSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
+import { useAuth } from '@clerk/clerk-react';
 
 const ThemeChanger = () => {
+    const {getToken} = useAuth();
+
     const mode = useSelector(state => state.theme.mode);
     const dispatch = useDispatch();
     const toggle = async() => {
         try {
             dispatch(toggleMode());
-            await axios.patch(`${import.meta.env.VITE_DB_URI}/api/v1/user/setting/toggle/theme`)
+            const token = await getToken();
+            await axios.patch(`${import.meta.env.VITE_DB_URI}/api/v1/user/setting/toggle/theme`, {}, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
         } catch (err) {
             toast.error(err.message);
         }

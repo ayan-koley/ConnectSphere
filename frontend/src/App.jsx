@@ -63,7 +63,12 @@ const App = () => {
           document.querySelector('html').className = localStorage.getItem('theme');
       } else {
         try {
-          const response = await axios.get(`${import.meta.env.VITE_DB_URI}/api/v1/user/setting/theme`).then(res => dispatch(setMode(res.data.data)));
+          const token = await getToken();
+          await axios.get(`${import.meta.env.VITE_DB_URI}/api/v1/user/setting/theme`, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }).then(res => dispatch(setMode(res.data.data)));
         } catch (error) {
           toast.error(error.message);
         }

@@ -8,20 +8,20 @@ import PostSkeleton from '../Skeleton/PostSkeleton';
 
 const FavoritePosts = () => {
     const {getToken} = useAuth();
-    const [ posts, setPosts ] = useState([]);
+    const [ favorites, setFavorites ] = useState([]);
     const [isPending, startTransition] = useTransition();
 
     const fetchPosts = () => {
         startTransition(async() => {
             try {
                 const token = await getToken();
-                const response = await axios.get(`${import.meta.env.VITE_DB_URI}/api/v1/post/favorite/user`, {
+                const response = await axios.get(`${import.meta.env.VITE_DB_URI}/api/v1/favorite/post`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     }
                 }).then(res => res.data);
 
-                setPosts(response.data);
+                setFavorites(response.data);
             } catch (err) {
                 toast.error(err.message);
             }
@@ -34,19 +34,19 @@ const FavoritePosts = () => {
 
   return !isPending ? (
     <div>
-        <div className='flex justify-center mt-10 w-full'>
-            <h1 className='text-2xl'>Favorites Posts</h1>
+        <div className='flex justify-center w-full mt-10'>
+            <h1 className='text-3xl font-bold mb-5'>Favorites Posts</h1>
         </div>
         <Separator />
         <div>
             {
-              posts.length > 0 ?  posts?.map((post) => (
-                    <div key={post}>
-                        <PostCard post={post} />
+                favorites.length > 0 ?  favorites?.map((favorite) => (
+                    <div key={favorite._id}>
+                        <PostCard post={favorite.post} />
                     </div>
                 )) : (
-                    <div className='w-full h-screen flex justify-center'>
-                        No one have favorite post
+                    <div className='w-full flex h-screen justify-center mt-10'>
+                        <h1 className='text-2xl'>No one have favorite post</h1>
                     </div>
                 )
             }

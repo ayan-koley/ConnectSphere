@@ -6,12 +6,17 @@ import { useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import axios from 'axios';
 import ProfileDetailsSkeleton from '../Skeleton/ProfileDetailsSkeleton';
+import FollowButton from '../FollowButton';
+import UnFollowButton from '../UnFollowButton';
+import { useAuth } from '@clerk/clerk-react';
 
 const ProfileDetails = () => {
     const [isPending, startTransition] = useTransition()
-
     const { userId } = useParams();
     const [userData, setUserData] = useState({});
+    const [isFollow, setIsFollow] = useState(true);
+    const {getToken} = useAuth()
+
     const fetchDashboardData = async() => {
         startTransition(async() => {
             try {
@@ -23,6 +28,21 @@ const ProfileDetails = () => {
         })
     }
 
+    const isFollowTheUser = () => {
+        startTransition(async() => {
+            try {
+                const token = await getToken();
+                await axios.get(`${import.meta.env.VITE_DB_URI}/api/v1/relation/following/status`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }).then(res => setIsFollow(res.data.data));
+            } catch (err) {
+                
+            }
+        })
+    }
+
     useEffect(() => {
         if(Object.keys(userData).length === 0) {
             const fetchData = async() => {
@@ -30,6 +50,10 @@ const ProfileDetails = () => {
             }
             fetchData();
         }
+    }, [])
+
+    useEffect(() => {
+        isFollowTheUser();
     }, [])
 
 
@@ -49,6 +73,19 @@ const ProfileDetails = () => {
             {/* Username and Edit Button */}
             <div className="flex flex-col md:flex-row md:items-center gap-4">
                 <h2 className="text-3xl font-light tracking-wide">{userData.userDetails.username}</h2>
+                <div>
+                    {
+                    isFollow ? (
+                        <div onClick={() => setIsFollow(false)}>
+                            <FollowButton userId={userData._id} />
+                        </div>
+                    ) : (
+                        <div onClick={() => setIsFollow(true)}>
+                            <UnFollowButton userId={userData._id} />
+                        </div>
+                    )
+                }
+                </div>
                 <Button 
                     variant="ghost" 
                     className="glass-button font-medium px-6 py-2 rounded-full transition-all hover:scale-105"

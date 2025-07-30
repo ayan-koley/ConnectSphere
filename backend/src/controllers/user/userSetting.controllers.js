@@ -4,7 +4,7 @@ import { asyncHandler } from "../../utils/asyncHandler.js";
 import UserSetting from "../../models/user/userSetting.models.js";
 import User from "../../models/user/user.models.js";
 
-const changeTheme = asyncHandler(async (req, res) => {
+const toggleTheme = asyncHandler(async (req, res) => {
   const user = await User.findOne({ clerkId: req.auth.userId });
   if (!user) {
     throw new ApiError(404, "User not found");
@@ -88,4 +88,25 @@ const getUserSetting = asyncHandler(async (req, res) => {
     );
 });
 
-export { changeTheme, updateLanguage, updateCountry, getUserSetting };
+const getCurrentTheme = asyncHandler(async(req, res) => {
+    const user = await User.findOne({clerkId: req.auth.userId});
+    if(!user) {
+      throw new ApiError(
+        404,
+        "User is not found in dbs"
+      )
+    }
+    const setting = await UserSetting.findOne({userId: user._id});
+
+    return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        setting.theme,
+        "Current Theme fetched successfully"
+      )
+    )
+})
+
+export { toggleTheme, updateLanguage, updateCountry, getUserSetting, getCurrentTheme };

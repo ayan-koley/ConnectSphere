@@ -3,6 +3,7 @@ import PostSkeleton from './PostSkeleton.jsx';
 import CreatePostSkeleton from './CreatePostSkeleton.jsx';
 import UserSkeleton from './UserSkeleton.jsx';
 import { Skeleton } from "@/components/ui/skeleton"
+import FriendSuggestionSkeleton from './FriendSuggestionSkeleton.jsx';
 
 const HomePageSkeleton = () => {
 
@@ -22,18 +23,7 @@ const HomePageSkeleton = () => {
                 ))
             }
         </div>
-        <div className='md:w-xl flex justify-center'>
-            <div className='flex flex-col gap-5 border p-10 h-fit rounded-xl'>
-                {
-                    array.map((v) => (
-                        <div key={v} className='flex items-center gap-5'>
-                            <UserSkeleton />
-                            <Skeleton className="h-8 w-15" />
-                        </div>
-                    ))
-                }
-           </div>
-        </div>
+        <FriendSuggestionSkeleton />
     </div>
   )
 }

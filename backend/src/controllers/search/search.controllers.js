@@ -43,28 +43,133 @@ const searchPost = asyncHandler(async(req, res) => {
             
         },
         {
+            $lookup: {
+                from: "users",
+                foreignField: "_id",
+                localField: "userId",
+                as: "avatar",
+                pipeline: [
+                    {
+                        $project: {
+                            image: 1,
+                            _id: 0
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            $lookup: {
+                from: "userprofiles",
+                foreignField: "userId",
+                localField: "userId",
+                as: "userDetails",
+                pipeline: [
+                    {
+                        $project: {
+                            username: 1,
+                            firstName: 1,
+                            lastName: 1,
+                            _id: 0
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            $lookup: {
+                from: "likes",
+                foreignField: "postId",
+                localField: "_id",
+                as: "likeDocs",
+                
+            }
+        },
+        {
+            $lookup: {
+                from: "comments",
+                foreignField: "postId",
+                localField: "_id",
+                as: "commentDocs",
+                
+            }
+        },
+        {
+            $lookup: {
+                from: "postviews",
+                foreignField: "postId",
+                localField: "_id",
+                as: "totalViews"
+            }
+        },
+        {
+            $addFields: {
+                totalComments: {
+                    $size: "$commentDocs"
+                },
+                totalLikes: {
+                    $size: "$likeDocs"
+                },
+                avatar: {
+                    $first: "$avatar"
+                },
+                userDetails: {
+                    $first: "$userDetails"
+                },
+                totalViews: {
+                    $first: "$totalViews"
+                }
+            }
+        },
+        {
             $sort: {
                 createdAt: -1
             }
         },
         {
-            $limit: 20
+            $limit: 30
         }
     ])
-    const users = await UserProfile.find({
-        $or: [
-            {
-                username: {
-                    $regex: input, $options: "i"
-                }
-            },
-            {
-                firstName: {
-                    $regex: input, $options: "i"
+    const users = await UserProfile.aggregate([
+        {
+            $match: {
+                $or: [
+                    {
+                        username: {
+                            $regex: input, $options: "i"
+                        }
+                    },
+                    {
+                        firstName: {
+                            $regex: input, $options: "i"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            $lookup: {
+                from: "users",
+                foreignField: "_id",
+                localField: "userId",
+                as: "user",
+                pipeline: [
+                    {
+                        $project: {
+                            image: 1
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            $addFields: {
+                user: {
+                    $first: "$user"
                 }
             }
-        ]
-    })
+        }
+    ])
 
     return res
     .status(200)

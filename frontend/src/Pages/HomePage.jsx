@@ -18,7 +18,7 @@ return posts && posts.length > 0 ? (
                 <CreatePost />
                 <div className="space-y-4">
                 {posts?.map((post) => (
-                    <div key={post._id} onClick={() => navigate(`/post/${post._id}`)} className='cursor-pointer'>
+                    <div key={post._id} >
                         <PostCard  post={post} />
                     </div>
                 ))}

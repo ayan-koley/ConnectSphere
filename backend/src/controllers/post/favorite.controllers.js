@@ -3,6 +3,7 @@ import { ApiResponse } from "../../utils/ApiResponse.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import Favorite from "../../models/post/favorites.models.js";
 import User from "../../models/user/user.models.js";
+import mongoose from "mongoose";
 
 
 const toggleFavoritePost = asyncHandler(async (req, res) => {
@@ -14,7 +15,8 @@ const toggleFavoritePost = asyncHandler(async (req, res) => {
     if (!user) {
         throw new ApiError(404, "User not found");
     }
-    let favorite = await Favorite.findOne({ userId: user._id, postId });
+    let favorite = await Favorite.findOne({ userId: user._id, postId: new mongoose.Types.ObjectId(postId)
+     });
     if (favorite) {
         await Favorite.deleteOne({ _id: favorite._id });
         return res
@@ -26,7 +28,7 @@ const toggleFavoritePost = asyncHandler(async (req, res) => {
                 )
             );
     }
-    await Favorite.create({ userId: user._id, postId });
+    await Favorite.create({ userId: user._id, postId: new mongoose.Types.ObjectId(postId) });
     return res
         .status(201)
         .json(
@@ -42,7 +44,7 @@ const getUserFavorites = asyncHandler(async (req, res) => {
     if (!user) {
         throw new ApiError(404, "User not found");
     }
-    const favorites = await Favorite.find({ userId: user._id }).populate("postId");
+    const favorites = await Favorite.find({ userId: user._id });
     return res
         .status(200)
         .json(
@@ -54,7 +56,34 @@ const getUserFavorites = asyncHandler(async (req, res) => {
         );
 })
 
+const getPostFavoriteStatus = asyncHandler(async(req, res) => {
+    const { postId } = req.params;
+    const user = await User.findOne({clerkId: req.auth.userId});
+    if(!user) {
+        throw new ApiError(
+            401,
+            "Unauthorized User"
+        )
+    }
+
+    const isFavorite = await Favorite.findOne({
+        userId: user._id,
+        postId: new mongoose.Types.ObjectId(postId)
+    })
+
+    return res
+    .status(200)
+    .json(
+        new ApiResponse(
+            200,
+            !!isFavorite,
+            "Fetched post is favorite or not"
+        )
+    )
+})
+
 export {
     toggleFavoritePost,
-    getUserFavorites
+    getUserFavorites,
+    getPostFavoriteStatus
 }
