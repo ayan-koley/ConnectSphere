@@ -4,7 +4,7 @@ import {
   updateComment,
   getCommentsByPostId,
   deleteComment,
-} from "../../controllers/comment/comment.controllers.js";
+} from "../../controllers/post/comment.controllers.js";
 import { requiredAuth } from "../../middlewares/requiredAuth.js";
 
 const router = Router();

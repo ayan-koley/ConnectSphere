@@ -113,9 +113,37 @@ const getFollowing = asyncHandler(async (req, res) => {
     );
 });
 
+const getFollowingStatus = asyncHandler(async(req, res) => {
+    const { userId } = req.params;
+    const user = await User.findOne({
+        clerkId: req.auth.userId
+    })
+    if(!user) {
+        throw new ApiError(
+            400,
+            "User is not found in dbs"
+        )
+    }
+    const isFollowing = await FollowRelationship.findOne({
+        userId: new mongoose.Types.ObjectId(userId),
+        followedUserId: user._id
+    })
+
+    return res
+    .status(200)
+    .json(
+        new ApiResponse(
+            200,
+            !!isFollowing,
+            "Successfully Follow the user"
+        )
+    )
+})
+
 export {
     followUser,
     unfollowUser,
     getFollowers,
-    getFollowing
+    getFollowing,
+    getFollowingStatus
 };

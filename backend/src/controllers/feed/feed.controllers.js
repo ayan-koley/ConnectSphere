@@ -251,7 +251,7 @@ const getSuggestedUsers = asyncHandler(async(req, res) => {
     if(!user) {
         throw new ApiError(
             404,
-            "Unauthorized Request"
+            "User is not found in dbs"
         )
     }
 
@@ -259,32 +259,101 @@ const getSuggestedUsers = asyncHandler(async(req, res) => {
         followedUserId: user._id
     })
 
-    const userFollowingUserId = userFollowingUser?.map((f) => f.userId);
+    if(userFollowingUser.length > 0) {
+        const userFollowingUserId = userFollowingUser?.map((f) => f.userId);
 
-    const suggestionUsers = await FollowRelationship.find(
+        const suggestionUsers = await FollowRelationship.find(
+            {
+                followedUserId: { $in: userFollowingUserId }
+            }
+        ).limit(20);
+
+        const filterOutSimilars = suggestionUsers?.filter((u) => !userFollowingUserId.some(id => id.equals(u?.userId)));
+
+        // ✅ Extract user IDs
+        const suggestedUserIds = filterOutSimilars.map(u => u.userId);
+
+
+        const users = await User.aggregate([
         {
-            followedUserId: { $in: userFollowingUserId }
+            $match: {
+                _id: {$in: suggestedUserIds}
+            }
+        },
+        {
+            $lookup: {
+                from: "userprofiles",
+                foreignField: "userId",
+                localField: "_id",
+                as: "userDetails"
+            }
+        },
+        {
+            $addFields: {
+                userDetails: {
+                    $first: "$userDetails"
+                }
+            }
+        },
+        {
+            $project: {
+                image: 1,
+                userDetails: 1
+            }
+        },
+        {
+            $limit: 20
         }
-    ).limit(20);
+    ])
 
-    const filterOutSimilars = suggestionUsers?.filter((u) => !userFollowingUserId.some(id => id.equals(u?.userId)));
-
-    // ✅ Extract user IDs
-    const suggestedUserIds = filterOutSimilars.map(u => u.userId);
-
-
-    const users = await User.find({
-        _id: { $in: suggestedUserIds }
-    })
+        return res
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                users,
+                "Suggest friend successfully"
+            )
+        )
+    } 
+    const users = await User.aggregate([
+        {
+            $match: {
+                _id: {$ne: user._id}
+            }
+        },
+        {
+            $lookup: {
+                from: "userprofiles",
+                foreignField: "userId",
+                localField: "_id",
+                as: "userDetails"
+            }
+        },
+        {
+            $addFields: {
+                userDetails: {
+                    $first: "$userDetails"
+                }
+            }
+        },
+        {
+            $project: {
+                image: 1,
+                userDetails: 1
+            }
+        },
+        {
+            $limit: 20
+        }
+    ])
 
     return res
     .status(200)
     .json(
         new ApiResponse(
             200,
-            {
-                users
-            },
+            users,
             "Suggest friend successfully"
         )
     )

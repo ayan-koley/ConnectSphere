@@ -39,11 +39,12 @@ app.use("/api/v1/user/setting", userSettingRouter);
 app.use("/api/v1/relation", followRelationshipRouter);
 app.use("/api/v1/post", postRouter);
 app.use("/api/v1/like", likeRouter);
-app.use("/api/v1/post/favorite", postFavoriteRouter);
-app.use("/api/v1/post/view", postViewRouter);
-app.use("/api/v1/post/comment", commentRouter);
-app.use("/api/v1/search", searchRouter), app.use("/api/v1/feed", feddRouter);
-app.use("/api/v1", healthCheckRouter);
+app.use("/api/v1/favorite/post", postFavoriteRouter);
+app.use("/api/v1/view/post", postViewRouter);
+app.use("/api/v1/comment/post", commentRouter);
+app.use("/api/v1/search", searchRouter), 
+app.use("/api/v1/feed", feddRouter);
+app.use("/api/v1/health", healthCheckRouter);
 app.use("/api/v1/dashboard", dashboardRouter);
 
 export { app };

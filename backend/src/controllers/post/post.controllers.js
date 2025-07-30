@@ -1,6 +1,6 @@
 import Post from "../../models/post/post.models.js";
 import User from "../../models/user/user.models.js";
-import Comment from "../../models/comment/comment.models.js";
+import Comment from "../../models/post/comment.models.js";
 import Like from "../../models/post/Like.models.js";
 import Favorite from "../../models/post/favorites.models.js";
 import PostView from "../../models/post/postView.models.js";
