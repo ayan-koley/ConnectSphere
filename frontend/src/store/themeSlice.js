@@ -11,10 +11,13 @@ const themeSlice  = createSlice({
         setMode: (state, action) => {
             state.mode = action.payload;
             localStorage.setItem("theme", state.mode)
+            console.log(state.mode);
+            document.querySelector('html').className = state.mode;
         },
         toggleMode: (state, action) => {
             state.mode = state.mode === "dark" ? "light" : "dark";
             localStorage.setItem("theme", state.mode);
+            document.querySelector('html').className = state.mode;
         }
     }
 })

@@ -14,6 +14,7 @@ import { AlertCircleIcon, CrossIcon } from 'lucide-react';
 import {useDispatch, useSelector} from 'react-redux'
 import { useAuth } from '@clerk/clerk-react';
 import { addToFeed } from '../../store/feedSlice';
+import { SyncLoader  } from 'react-spinners'
 
 const CreatePost = ({post}) => {
 
@@ -22,7 +23,6 @@ const CreatePost = ({post}) => {
     const {getToken} = useAuth();
     const dispatch = useDispatch();
 
-    const src = "";
     const [isPending, startTransition] = useTransition();
     const [suggestions, setSuggestions] = useState([]);
     const [mentionMap, setMentionMap] = useState({});
@@ -33,7 +33,7 @@ const CreatePost = ({post}) => {
         startTransition(async() => {
             try {
                 const { hashtags, mentions } = extractTagsAndMentions(data.description);
-                const mentionsUserid = mentions?.map((m) => mentionMap?.[m]);
+                const mentionsUserid = mentions?.map((m) => mentionMap[m]);
                 const formData = new FormData();
                 formData.append("description", data.description);
                 formData.append("active", "true");
@@ -47,10 +47,9 @@ const CreatePost = ({post}) => {
                 hashtags?.forEach((tag) => formData.append("hashtag[]", tag));
                 mentionsUserid?.forEach((id) => formData.append("mention[]", id));
 
-                console.log("form data is ", formData);
 
                 const token = await getToken();
-                const responseOfCreatePost = await axios.post("https://cute-showers-help.loca.lt/api/v1/post/create", formData, 
+                const responseOfCreatePost = await axios.post(`${import.meta.env.VITE_DB_URI}/api/v1/post/create`, formData, 
                     {
                         headers: {
                             "Content-Type": "multipart/form-data",
@@ -61,7 +60,6 @@ const CreatePost = ({post}) => {
                     toast.success(res.data.message);
                     return res.data;
                 });
-                console.log("New Post ", responseOfCreatePost);
                 dispatch(addToFeed(responseOfCreatePost.data[0]));
 
                 setValue('description', '');
@@ -81,18 +79,22 @@ const CreatePost = ({post}) => {
     const handleSelectUser = (user) => {
         const { username, _id} = user;
         const mentionMatch = description.match(/@(\w*)$/);
-        const mentionToReplace = mentionMatch?.[1]
-        const updated = description.replace(`@${mentionToReplace}`, `@${username} `);
+
+        const updated = description.replace(/@(\w*)$/, ` @${username} `);
         setValue("description", updated);
-        setMentionMap((prev) => [{...prev, [username]: _id}]);
+        setMentionMap((prev) => (
+            {
+                ...prev,
+                [username]: user._id
+            }
+        ));
         setSuggestions([]);
     }
     const fetchedSuggestions = (mention) => {
         startTransition(async() => {
             try {
-                const suggest = await axios.get(`https://cute-showers-help.loca.lt/api/v1/search/user?username=${mention}`).then(res => res.data);
+                const suggest = await axios.get(`${import.meta.env.VITE_DB_URI}/api/v1/search/user?username=${mention}`).then(res => res.data);
 
-                console.log(suggest.data);
                 setSuggestions(suggest.data);
 
             } catch (error) {
@@ -129,7 +131,7 @@ const CreatePost = ({post}) => {
             </div>)}
             <form onSubmit={handleSubmit(submit)}>
                 <div className="flex space-x-3">
-                    <AuthAvatar src={userData?.image} className={"h-10 w-10"} />
+                    <AuthAvatar src={userData?.image} className={"md:h-10 md:w-10"} />
                     <Textarea
                         placeholder="What's happening?"
                         className={`min-h-[80px] resize-none border-none p-4 text-lg placeholder:text-muted-foreground focus-visible:ring-0 focus-visible:ring-offset-0`}
@@ -156,7 +158,7 @@ const CreatePost = ({post}) => {
 
                 <div className='flex-1'>
                     <div className={`${post && 'flex-row-reverse'} flex items-center justify-between mt-4`}>
-                        <div className={`${post && 'hidden'} ml-15`}>
+                        <div className={`${post && 'hidden'} md:ml-15 mr-5 md:mr-0`}>
 
                             <Input type="file" accept="image/*, .mp4" multiple {...register("files", {
                                 validate: {
@@ -165,15 +167,16 @@ const CreatePost = ({post}) => {
                                     }
                                 }
                             })} />
+
                         </div>
                         {errors.media && <p className="text-red-500">{errors.media.message}</p>}
                         
                         <Button 
-                            className={`px-6 cursor-pointer ${isPending && 'cursor-not-allowed'}`}
+                            className={`px-6 cursor-pointer ${isPending ? 'cursor-not-allowed' : ''}`}
                             type="submit"
                             disabled={isPending}
                         >
-                            {post ? 'Update' : 'Post'}
+                            {isPending ? <SyncLoader size={4} /> : post ? 'Update' : 'Post'}
                         </Button>
                     </div>
                 </div>

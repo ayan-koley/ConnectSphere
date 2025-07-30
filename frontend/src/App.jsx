@@ -9,6 +9,7 @@ import toast from 'react-hot-toast'
 import { useDispatch, useSelector } from 'react-redux'
 import { login } from './store/authSlice.js'
 import { fetchGlobalFeed } from './store/feedSlice.js'
+import { setMode } from './store/themeSlice.js'
 
 const App = () => {
 
@@ -47,21 +48,36 @@ const App = () => {
   useEffect(() => {
       const func = async() => {
         try {
-          const response = await axios.get("http://localhost:5000/api/v1/health");
-          console.log("Reaponse ", response.data.message);
+          const response = await axios.get(`${import.meta.env.VITE_DB_URI}/api/v1/health`);
         } catch (error) {
-          console.log(error.message);
+          console.error(error.message);
         }
       }
       func();
-  }, []);
+  }, [status]);
+
+  useEffect(() => {
+    const getMode = async() => {
+      if(localStorage.getItem('theme')) {
+          dispatch(setMode(localStorage.getItem('theme')));
+          document.querySelector('html').className = localStorage.getItem('theme');
+      } else {
+        try {
+          const response = await axios.get(`${import.meta.env.VITE_DB_URI}/api/v1/user/setting/theme`).then(res => dispatch(setMode(res.data.data)));
+        } catch (error) {
+          toast.error(error.message);
+        }
+      }
+    } 
+    if(status) getMode();
+  }, [status])
 
   return (
     <div className="min-h-screen bg-background px-5">
       <Header />
-      <div className="flex py-0">
+      <div className="flex flex-col md:flex-row py-0">
         <SideBar />
-        <main className="flex-1 p-6">
+        <main className="flex-1 md:p-6">
           {/* It's work like Outlet */}
           <Outlet />
         </main>

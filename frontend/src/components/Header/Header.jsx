@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import ProfileDropdown from './ProfileDropdown'
 import { Search } from 'lucide-react'
 import { useSelector } from 'react-redux';
+import SearchBox from './SearchBox';
 
 const Header = () => {
 
@@ -20,15 +21,7 @@ const Header = () => {
             <Logo />
           </div>
           {/* Search - Hidden on mobile, visible on md+ */}
-          <div className="hidden md:flex flex-1 max-w-2xl mx-8">
-            <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                placeholder="Search..."
-                className="pl-10 bg-muted/50 border-border focus:border-ring"
-              />
-            </div>
-          </div>
+            <SearchBox />
           {/* Right section */}
           <div className="flex items-center space-x-4">
             <Button variant="ghost" size="icon" className="md:hidden">

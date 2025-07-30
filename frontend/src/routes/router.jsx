@@ -7,6 +7,7 @@ import ProfilePage from "../Pages/ProfilePage.jsx";
 import PostViewPage from "../Pages/PostViewPage.jsx";
 import SignUpPage from "../Pages/SignUpPage.jsx";
 import SignInPage from "../Pages/SignInPage.jsx";
+import SearchItemsPage from "../Pages/SearchItemsPage.jsx";
 
 export const router = createBrowserRouter([
     {
@@ -22,12 +23,16 @@ export const router = createBrowserRouter([
                 element: <FavoritesPage />
             },
             {
-                path: "/profile",
+                path: "/profile/:userId",
                 element: <ProfilePage />,
             },
             {
-                path: "/post/:id",
+                path: "/post/:postId",
                 element: <PostViewPage />
+            },
+            {
+                path: "/search",
+                element: <SearchItemsPage />
             }
         ]
     },

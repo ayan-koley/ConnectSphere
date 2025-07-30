@@ -8,11 +8,9 @@ import { Provider } from 'react-redux'
 import store from './store/store.js'
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
     <ClerkProvider publishableKey='pk_test_YWRhcHRlZC1zd2FuLTQxLmNsZXJrLmFjY291bnRzLmRldiQ'>
       <Provider store={store}>
         <RouterProvider router={router} />
       </Provider>
     </ClerkProvider>
-  </StrictMode>,
 )

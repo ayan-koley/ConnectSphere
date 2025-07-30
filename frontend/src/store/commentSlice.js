@@ -1,13 +1,13 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import axios from 'axios'
 
-const fetchComment = createAsyncThunk(
+export const fetchComment = createAsyncThunk(
     "fetch/comment",
     async(postId) => {
         try {
         
-            const response = await axios.get("http://localhost:5000/api/v1/feed");
-            return {postId, comment: response.data};
+            const response = await axios.get(`${import.meta.env.VITE_DB_URI}/api/v1/post/comment/${postId}`).then(res => res.data);
+            return {postId, comment: response.comment};
         } catch (error) {
             console.error(error.message);
         }

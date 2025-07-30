@@ -5,8 +5,7 @@ export const fetchGlobalFeed = createAsyncThunk(
     "fetch/globalFeed",
     async(token, thunkApi) => {
         try {
-            console.log()
-            const response = await axios.get("https://cute-showers-help.loca.lt/api/v1/feed", {
+            const response = await axios.get(`${import.meta.env.VITE_DB_URI}/api/v1/feed`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }

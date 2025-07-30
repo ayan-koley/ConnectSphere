@@ -3,10 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import AuthAvatar from "../Header/AuthAvatar";
 import PostMediaCard from "../PostMediaCard/PostMediaCard";
+import { useNavigate } from 'react-router-dom'
 
 const PostCard = ({ post }) => {
-
-
 return (
     <Card className="mb-4">
         <CardHeader className="pb-3">

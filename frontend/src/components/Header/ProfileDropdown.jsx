@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom'
 import { SignOutButton, useAuth } from '@clerk/clerk-react'
 
 const ProfileDropdown = ({status, src}) => {
+    const userData = useSelector(state => state.authSlice?.userData);
     const navigate = useNavigate();
     const { sessionId } = useAuth();
 
@@ -26,7 +27,7 @@ const ProfileDropdown = ({status, src}) => {
             <DropdownMenuContent className="w-56" align="end" forceMount>
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => navigate("/profile")}>
+                <DropdownMenuItem onClick={() => navigate(`/profile/${userData?._id}`)}>
                     <User className='mr-2 h-4 w-4'/>
                     <span>Profile</span>
                 </DropdownMenuItem>

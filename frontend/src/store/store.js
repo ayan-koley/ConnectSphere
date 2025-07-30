@@ -4,12 +4,14 @@ import searchHistorySlice from './searchHistorySlice.js'
 import feedSlice from './feedSlice.js';
 import commentSlice from './commentSlice.js'
 import authSlice from './authSlice.js'
+import searchSlice from './searchSlice.js';
 
 const store = configureStore({
     reducer: {
         authSlice,
-        themeSlice,
-        searchHistorySlice,
+        theme: themeSlice,
+        searchHistory: searchHistorySlice,
+        search: searchSlice,
         feedSlice,
         commentSlice
     }
