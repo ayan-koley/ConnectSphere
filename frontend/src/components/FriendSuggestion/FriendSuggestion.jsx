@@ -10,12 +10,14 @@ import axios from 'axios'
 import { useAuth } from '@clerk/clerk-react'
 import FollowButton from '../FollowButton'
 import FriendSuggestionSkeleton from '../Skeleton/FriendSuggestionSkeleton'
+import { useNavigate } from 'react-router-dom'
 
 const userSuggestion = () => {
     const [users, setUsers] = useState([]);
     const [isOpenSuggestion, setIsOpenSuggestion] = useState(false);
     const [isPending, startTransition] = useTransition();
     const { getToken } = useAuth();
+    const navigate = useNavigate();
 
     const fetchSuggestionUsers = () => {
         startTransition(async() => {
@@ -36,7 +38,6 @@ const userSuggestion = () => {
         fetchSuggestionUsers();
     }, [])
 
-    console.log("user is ", users);
 
   return !isPending ? (
     <Card>
@@ -48,7 +49,7 @@ const userSuggestion = () => {
             {users.length > 0 && users.map((user) => (
             <div key={user._id} className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                <div className="relative">
+                <div className="relative" onClick={() => navigate(`/profile/${user._id}`)}>
                     <AuthAvatar src={user.image} className={'h-10 w-10'} />
                     {/* user Online so blue circle */}
                     {/* {user.isOnline && (
@@ -60,9 +61,7 @@ const userSuggestion = () => {
                     <p className="text-xs text-muted-foreground">{user.userDetails.lastName}</p>
                 </div>
                 </div>
-                <Button variant="outline" size="sm">
-                    Follow
-                </Button>
+                <FollowButton userId={user._id} />
             </div>
             ))}
             <Button variant="ghost" className={`w-full mt-4 text-primary ${isOpenSuggestion && 'hidden'}`}>
@@ -79,7 +78,7 @@ const userSuggestion = () => {
                     <p className="text-xs text-muted-foreground">{user.userDetails.lastName}</p>
                 </div>
                 </div>
-                <FollowButton userId={user._id} />
+                {/* <FollowButton userId={user._id} /> */}
             </div>
             ))}
         </CardContent>

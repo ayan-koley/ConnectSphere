@@ -5,28 +5,14 @@ import { Button } from '@/components/ui/button';
 import { HeartPlus } from 'lucide-react';
 import toast from 'react-hot-toast';
 import axios from 'axios';
+import { useDispatch } from 'react-redux';
 
-const FavoriteButton = ({postId}) => {
-    const [isFavorite, setIsFavorite] = useState(false);
+const FavoriteButton = ({postId, favorite}) => {
+    const [isFavorite, setIsFavorite] = useState(favorite);
         const[isPending, startTransition] = useTransition();
         const { getToken } = useAuth();
-    
-        const fetchIsFavorite = () => {
-            startTransition(async() => {
-                    try {
-                        const token = await getToken();
-                        const response = await axios.get(`${import.meta.env.VITE_DB_URI}/api/v1/favorite/post/${postId}/status`, {
-                            headers: {
-                                Authorization: `Bearer ${token}`
-                            }
-                        }).then(res => res.data);
-                        setIsFavorite(response.data);
-                    } catch (err) {
-                        toast.error(err.message);
-                    }
-            })
-        }
-        
+        const dispatch = useDispatch();
+
         const toggleFavorite = () => {
             startTransition(async() => {
                 try {
@@ -37,7 +23,7 @@ const FavoriteButton = ({postId}) => {
                             Authorization: `Bearer ${token}`
                         }
                     }).then(res => res.data).catch((err) => toast.error(err.message));
-    
+                    dispatch(toggleFavorite(postId));
                     toast.success(response.message);
                 } catch(err) {
                     toast.error(err.message);
@@ -45,10 +31,7 @@ const FavoriteButton = ({postId}) => {
             })
         }
     
-        useEffect(() => {
-            fetchIsFavorite();
-        }, []);
-    
+
 
   return !isPending ? (
     <div onClick={toggleFavorite} className='cursor-pointer'>

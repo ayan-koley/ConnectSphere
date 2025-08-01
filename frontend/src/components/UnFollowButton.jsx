@@ -25,8 +25,8 @@ const UnFollowButton = ({userId}) => {
     }
     
   return (
-    <div>
-        <Button onClick={unFollowUser} variants="ghost">
+    <div onClick={unFollowUser}>
+        <Button  variants="ghost" className="cursor-pointer">
             {
                 isPending ? (<PulseLoader size={4} />) : "Unfollow"
             }

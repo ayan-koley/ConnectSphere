@@ -5,7 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 const FriendSuggestionSkeleton = () => {
     const array = [0, 1, 2,3, 4, 5];
   return (
-        <div className='md:w-xl flex justify-center'>
+        <div className='md:max-w-xs justify-center'>
             <div className='flex flex-col gap-5 border p-10 h-fit rounded-xl'>
                 {
                     array.map((v) => (

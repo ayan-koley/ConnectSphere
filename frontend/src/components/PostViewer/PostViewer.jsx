@@ -23,6 +23,7 @@ import LikeButton from '../LikeButton'
 import { useSelector } from 'react-redux'
 import CreateComment from '../Comment/CreateComment'
 import FavoriteButton from '../FavoriteButton'
+import PostCard from '../PostCard/PostCard'
 
 
 const PostViewer = () => {
@@ -30,6 +31,7 @@ const PostViewer = () => {
     const [post, setPost] = useState({});
     const userData = useSelector(state => state.authSlice.userData);
     const navigate = useNavigate();
+    const {likedPostIds, favoritedPostIds} = useSelector(state => state.reaction);
 
 
     const fetchPostData = async() => {
@@ -51,9 +53,12 @@ const PostViewer = () => {
 
 return Object.keys(post).length > 0 ? (
     <div>
+        
+                        {/* {samplePost.author.verified && (
+                            <CheckCircle className="h-5 w-5 text-social-verified fill-current" />
+                        )} */}
         <Card className="border-0 border-b border-border rounded-none">
-            <div className="p-4">
-                {/* Author Info */}
+            {/* <div className="p-4">
                 <div className="flex items-start gap-3 mb-3">
                     <div onClick={() => navigate(`/profile/${post.userId}`)}>
                         <AuthAvatar src={post.avatar?.image} className={'h-12 w-12'}  />
@@ -61,9 +66,6 @@ return Object.keys(post).length > 0 ? (
                     <div className="flex-1">
                         <div className="flex items-center gap-2">
                         <h3 className="font-bold text-base">Ayan</h3>
-                        {/* {samplePost.author.verified && (
-                            <CheckCircle className="h-5 w-5 text-social-verified fill-current" />
-                        )} */}
                         </div>
                         <p className="text-muted-foreground text-sm">{post.userDetails?.username}</p>
                     </div>
@@ -87,7 +89,6 @@ return Object.keys(post).length > 0 ? (
                     
                 </div>
 
-                {/* Post Content */}
                 <div className="mb-3">
                     <p className="text-foreground text-lg leading-relaxed mb-2">{post.description}</p>
                     <p className="text-muted-foreground text-sm">2h</p>
@@ -104,7 +105,9 @@ return Object.keys(post).length > 0 ? (
                     </Button>
                     <FavoriteButton postId={post._id} />
                 </div>
-            </div>
+            </div> */}
+
+            <PostCard post={post} />
 
  
             <Separator />

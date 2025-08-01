@@ -9,6 +9,7 @@ import ProfileDetailsSkeleton from '../Skeleton/ProfileDetailsSkeleton';
 import FollowButton from '../FollowButton';
 import UnFollowButton from '../UnFollowButton';
 import { useAuth } from '@clerk/clerk-react';
+import { useSelector } from 'react-redux'
 
 const ProfileDetails = () => {
     const [isPending, startTransition] = useTransition()
@@ -16,6 +17,9 @@ const ProfileDetails = () => {
     const [userData, setUserData] = useState({});
     const [isFollow, setIsFollow] = useState(true);
     const {getToken} = useAuth()
+    const {_id} = useSelector(state => state.authSlice?.userData);
+    console.log(_id);
+    console.log(userData._id);
 
     const fetchDashboardData = async() => {
         startTransition(async() => {
@@ -73,8 +77,12 @@ const ProfileDetails = () => {
             {/* Username and Edit Button */}
             <div className="flex flex-col md:flex-row md:items-center gap-4">
                 <h2 className="text-3xl font-light tracking-wide">{userData.userDetails.username}</h2>
-                <div>
+                {
+                userData._id.toString() !== _id &&
+                    (
+                        <div>
                     {
+                        
                     isFollow ? (
                         <div onClick={() => setIsFollow(false)}>
                             <FollowButton userId={userData._id} />
@@ -86,6 +94,8 @@ const ProfileDetails = () => {
                     )
                 }
                 </div>
+                    )
+                }
                 <Button 
                     variant="ghost" 
                     className="glass-button font-medium px-6 py-2 rounded-full transition-all hover:scale-105"

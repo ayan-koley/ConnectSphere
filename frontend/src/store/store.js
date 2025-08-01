@@ -1,10 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import themeSlice from './themeSlice.js';
-import searchHistorySlice from './searchHistorySlice.js'
+import searchHistorySlice from './searchHistorySlice.js';
 import feedSlice from './feedSlice.js';
-import commentSlice from './commentSlice.js'
-import authSlice from './authSlice.js'
+import commentSlice from './commentSlice.js';
+import authSlice from './authSlice.js';
 import searchSlice from './searchSlice.js';
+import reactionSlice from './reactionSlice.js';
 
 const store = configureStore({
     reducer: {
@@ -13,7 +14,8 @@ const store = configureStore({
         searchHistory: searchHistorySlice,
         search: searchSlice,
         feedSlice,
-        comments: commentSlice
+        comments: commentSlice,
+        reaction: reactionSlice
     }
 })
 

@@ -6,9 +6,12 @@ import PostMediaCard from "../PostMediaCard/PostMediaCard";
 import { useNavigate } from 'react-router-dom'
 import FavoriteButton from "../FavoriteButton";
 import LikeButton from "../LikeButton";
+import { useSelector } from "react-redux";
 
 const PostCard = ({ post }) => {
     const navigate = useNavigate();
+    const {likedPostIds, favoritedPostIds} = useSelector(state => state.reaction);
+
 return (
     <Card className="mb-4">
         <CardHeader className="pb-3">
@@ -30,12 +33,12 @@ return (
             </div>
             
             <div className="flex items-center justify-between pt-2 border-t border-border">
-                <LikeButton id={post._id} totalLikes={post.totalLikes} type="post" />
+                <LikeButton id={post._id} totalLikes={post.totalLikes} type="post" liked={likedPostIds.includes(post._id.toString())} />
                 <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary">
                     <MessageCircle className="mr-2 h-4 w-4" />
                     {post.totalComments}
                 </Button>
-                <FavoriteButton postId={post._id}  />
+                <FavoriteButton postId={post._id} favorite={favoritedPostIds.includes(post._id.toString())}  />
             </div>
         </CardContent>
     </Card>

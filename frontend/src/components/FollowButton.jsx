@@ -28,10 +28,10 @@ const FollowButton = ({userId}) => {
     }
 
   return (
-    <div>
+    <div onClick={followUser}>
         {
             isFollow ? (
-                <Button onClick={followUser} size="sm" disabled={isPending}>
+                <Button  size="sm" disabled={isPending} className="cursor-pointer">
                     {
                         isPending ? (<PulseLoader size={4} />) : "Follow"
                     }

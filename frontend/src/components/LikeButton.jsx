@@ -7,28 +7,15 @@ import axios from 'axios'
 import { toast } from 'react-hot-toast'
 import { useEffect } from 'react';
 import { useAuth } from '@clerk/clerk-react'
+import { useDispatch } from 'react-redux';
 
-const LikeButton = ({totalLikes=0, id, type="post"}) => {
-    const [isLiked, setIsLiked] = useState(false);
+const LikeButton = ({totalLikes=0, id, type="post", liked}) => {
+    const [isLiked, setIsLiked] = useState(liked);
     const[isPending, startTransition] = useTransition();
     const [likes, setLikes] = useState(totalLikes);
     const { getToken } = useAuth();
+    const dispatch = useDispatch();
 
-    const fetchIsLiked = () => {
-        startTransition(async() => {
-                try {
-                    const token = await getToken();
-                    const response = await axios.get(`${import.meta.env.VITE_DB_URI}/api/v1/like/${id}`, {
-                        headers: {
-                            Authorization: `Bearer ${token}`
-                        }
-                    }).then(res => res.data);
-                    setIsLiked(response.data);
-                } catch (err) {
-                    toast.error(err.message);
-                }
-        })
-    }
     
     const toggleLike = () => {
         startTransition(async() => {
@@ -40,7 +27,8 @@ const LikeButton = ({totalLikes=0, id, type="post"}) => {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
-                }).then(res => res.data).catch((err) => toast.error);
+                }).then(res => res.data).catch((err) => toast.error(err.message));
+                dispatch(toggleLike(id))
 
                 toast.success(response.message);
             } catch(err) {
@@ -48,10 +36,6 @@ const LikeButton = ({totalLikes=0, id, type="post"}) => {
             }
         })
     }
-
-    useEffect(() => {
-        fetchIsLiked();
-    }, []);
 
     
 

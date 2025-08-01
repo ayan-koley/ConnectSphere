@@ -10,7 +10,7 @@ const HomePageSkeleton = () => {
     const array = [0, 1, 2, 3];
     
   return (
-    <div className='flex flex-col md:flex-row'>
+    <div className='flex flex-col md:flex-row gap-10'>
         <div>
             <div className='mb-15 border p-8 rounded-xl'>
                 <CreatePostSkeleton />

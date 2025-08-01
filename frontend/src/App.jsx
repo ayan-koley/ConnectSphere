@@ -1,15 +1,15 @@
 import React, { useEffect } from 'react'
 import Header from './components/Header/Header'
-import HomePage from './Pages/HomePage.jsx'
 import SideBar from './components/SideBar/SideBar.jsx'
 import { Outlet } from 'react-router-dom'
-import { useAuth, useUser } from '@clerk/clerk-react'
+import { useAuth } from '@clerk/clerk-react'
 import axios from 'axios'
 import toast from 'react-hot-toast'
 import { useDispatch, useSelector } from 'react-redux'
 import { login } from './store/authSlice.js'
 import { fetchGlobalFeed } from './store/feedSlice.js'
 import { setMode } from './store/themeSlice.js'
+import { setReactions } from './store/reactionSlice.js'
 
 const App = () => {
 
@@ -21,7 +21,7 @@ const App = () => {
       if(!status) {
         const token = await getToken();
         try {
-          const profileDetails = await axios.get('http://localhost:5000/api/v1/user/profile', {
+          const profileDetails = await axios.get(`${import.meta.env.VITE_DB_URI}/api/v1/user/profile`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -34,28 +34,35 @@ const App = () => {
         }
       }
   }
+  const getReactions = async() => {
+    try {
+        const token = await getToken();
+        const response = await axios.get(`${import.meta.env.VITE_DB_URI}/api/v1/reaction`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }).then(res => res.data.data);
+        dispatch(setReactions({
+          likedPostIds: response.likedPostIds,
+          favoritedPostIds: response.favoritedPostIds
 
+        }))
+    } catch (err) {
+        toast.error(err.message);
+    }
+  }
+  // api call for get user details and also gate all reactions details
   useEffect(() => {
     const fetchData = async() => {
       await getUserDetails();
+      await getReactions();
     }
     if(isSignedIn) {
         fetchData();
-    }
-    
+    } 
   }, [isSignedIn])
 
-  useEffect(() => {
-      const func = async() => {
-        try {
-          const response = await axios.get(`${import.meta.env.VITE_DB_URI}/api/v1/health`);
-        } catch (error) {
-          console.error(error.message);
-        }
-      }
-      func();
-  }, [status]);
-
+  // api call for take theme mode
   useEffect(() => {
     const getMode = async() => {
       if(localStorage.getItem('theme')) {
@@ -76,6 +83,7 @@ const App = () => {
     } 
     if(status) getMode();
   }, [status])
+
 
   return (
     <div className="min-h-screen bg-background px-5">
