@@ -84,6 +84,14 @@ const getUserFavorites = asyncHandler(async (req, res) => {
                     },
                 },
                 {
+                    $lookup: {
+                      from: "likes",
+                      foreignField: "postId",
+                      localField: "_id",
+                      as: "totalLikes"
+                    }
+                },
+                {
                     $addFields: {
                         avatar: {
                         $first: "$avatar",
@@ -91,6 +99,9 @@ const getUserFavorites = asyncHandler(async (req, res) => {
                         userDetails: {
                         $first: "$userDetails",
                         },
+                        totalLikes: {
+                          "$size": "$totalLikes"
+                        }
                     },
                 },
             ]

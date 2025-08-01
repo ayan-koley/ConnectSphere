@@ -31,7 +31,7 @@ const followUser = asyncHandler(async (req, res) => {
 
     // Check if the follow relationship already exists
     const existingFollow = await FollowRelationship.findOne({
-        userId: new mongoose.Types.ObjectId(followedUserId),
+        userId: isFollowedUserId._id,
         followedUserId: user._id
     });
 
@@ -41,7 +41,7 @@ const followUser = asyncHandler(async (req, res) => {
 
     // Create a new follow relationship
     await FollowRelationship.create({
-        userId: new mongoose.Types.ObjectId(followedUserId),
+        userId: isFollowedUserId._id,
         followedUserId: user._id
     });
 

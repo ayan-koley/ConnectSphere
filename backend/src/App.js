@@ -32,6 +32,7 @@ import searchRouter from "./routes/search/search.routes.js";
 import feddRouter from "./routes/feed/feed.routes.js";
 import healthCheckRouter from "./routes/healthcheck.routes.js";
 import dashboardRouter from "./routes/dashboard/dashboard.routes.js";
+import reactionRouter from './routes/reaction.routes.js';
 
 app.use("/api/v1/webhook", authRouter);
 app.use("/api/v1/user/profile", userProfileRouter);
@@ -46,5 +47,6 @@ app.use("/api/v1/search", searchRouter),
 app.use("/api/v1/feed", feddRouter);
 app.use("/api/v1/health", healthCheckRouter);
 app.use("/api/v1/dashboard", dashboardRouter);
+app.use("/api/v1/reaction", reactionRouter);
 
 export { app };
