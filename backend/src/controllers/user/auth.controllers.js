@@ -28,7 +28,7 @@ const authenticateWithClerk = asyncHandler(async(req, res) => {
   
   console.log("evt is - ", evt);
 
-  const {id, email_addresses, image_url, external_accounts, first_name, last_name, username } = evt.data;
+  const {id, email_addresses, image_url, external_accounts, first_name, last_name, username, profile_image_url } = evt.data;
 
   if(evt.type === 'user.created') {
     // create user on dbs
@@ -88,20 +88,21 @@ const authenticateWithClerk = asyncHandler(async(req, res) => {
           clerkId: id
         }
       )
-      if(image_url) {
-        await updatedUser.save({image: image_url});
+      if(profile_image_url) {
+        updatedUser.image = profile_image_url;
+        await updatedUser.save();
       }
-      // await UserProfile.findByIdAndUpdate(
-      //   {
-      //     _id: updatedUser._id
-      //   },
-      //   {
-      //     $set: {
-      //       firstName: first_name,
-      //       lastName: last_name
-      //     }
-      //   }
-      // )
+      await UserProfile.findOneAndUpdate(
+        {
+          userId: updatedUser._id
+        },
+        {
+          $set: {
+            firstName: first_name,
+            lastName: last_name
+          }
+        }
+      )
 
       return res
       .status(200)

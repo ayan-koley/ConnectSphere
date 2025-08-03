@@ -16,15 +16,76 @@ const createComment = asyncHandler(async (req, res) => {
   if (!user) {
     throw new ApiError(404, "User not found");
   }
-  console.log("Content is ", content);
   const comment = await Comment.create({
     postId,
     userId: user._id,
     content,
   });
+
+  const createdCommentData = await Comment.aggregate([
+    {
+      $match: {
+        _id: comment?._id
+      },
+    },
+    {
+      $lookup: {
+        from: "users",
+        foreignField: "_id",
+        localField: "userId",
+        as: "user",
+        pipeline: [
+          {
+            $project: {
+              image: 1,
+            },
+          },
+        ],
+      },
+    },
+    {
+      $lookup: {
+        from: "userprofiles",
+        foreignField: "userId",
+        localField: "userId",
+        as: "userDetails",
+        pipeline: [
+          {
+            $project: {
+              firstName: 1,
+              lastName: 1,
+              username: 1,
+            },
+          },
+        ],
+      },
+    },
+    {
+      $lookup: {
+        from: "likes",
+        foreignField: "commentId",
+        localField: "_id",
+        as: "totalLikes",
+      },
+    },
+    {
+      $addFields: {
+        user: {
+          $first: "$user",
+        },
+        userDetails: {
+          $first: "$userDetails",
+        },
+        totalLikes: {
+          $size: "$totalLikes",
+        },
+      },
+    },
+  ]);
+
   return res
     .status(201)
-    .json(new ApiResponse(201, comment, "Comment created successfully"));
+    .json(new ApiResponse(201, createdCommentData, "Comment created successfully"));
 });
 
 const updateComment = asyncHandler(async (req, res) => {

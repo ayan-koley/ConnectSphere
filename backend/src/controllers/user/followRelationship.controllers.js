@@ -81,15 +81,63 @@ const getFollowers = asyncHandler(async (req, res) => {
     const { userId } = req.params;
 
     // Find all users that follow the authenticated user
-    const followers = await FollowRelationship.find({ userId })
-        .populate('followedUserId', 'username image');
-
+    const followers = await FollowRelationship.aggregate([
+        {
+            $match: {
+                _id: new mongoose.Types.ObjectId(userId)
+            }
+        },
+        {
+            $lookup: {
+                from: "users",
+                foreignField: "_id",
+                localField: "followedUserId",
+                as: "avatar",
+                pipeline: [
+                    {
+                        $project: {
+                            image: 1,
+                            _id: 0
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            $lookup: {
+                from: "userprofiles",
+                foreignField: "userId",
+                localField: "followedUserId",
+                as: "userDetails",
+                pipeline: [
+                    {
+                        $project: {
+                            firstName: 1,
+                            lastName: 1,
+                            username: 1,
+                            _id: 0
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            $addFields: {
+                avatar: {
+                    $first: "$avatar"
+                },
+                userDetails: {
+                    $first: "$userDetails"
+                }
+            }
+        }
+    ])
     return res
     .status(200)
     .json(
         new ApiResponse(
             200, 
-            {followers},
+            followers,
             "Followers retrieved successfully"
         )
     );
@@ -140,10 +188,31 @@ const getFollowingStatus = asyncHandler(async(req, res) => {
     )
 })
 
+const getFollowingIds = asyncHandler(async(req, res) => {
+    const user = await User.findOne({clerkId: req.auth.userId});
+
+    const followingUsers = await FollowRelationship.find({
+        followedUserId: user?._id
+    }).select("userId -_id")
+
+    const followingUserIds = followingUsers?.map((u) => u.userId);
+
+    return res
+    .status(200)
+    .json(
+        new ApiResponse(
+            200,
+            followingUserIds,
+            "Successfully fetch followingids"
+        )
+    )
+})
+
 export {
     followUser,
     unfollowUser,
     getFollowers,
     getFollowing,
-    getFollowingStatus
+    getFollowingStatus,
+    getFollowingIds
 };

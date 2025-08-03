@@ -12,9 +12,9 @@ connectDB()
         console.log(`Server is running on port ${PORT}`);
     });
     // Get your endpoint online
-    // ngrok.connect({ addr: 5000, authtoken: process.env.NGROK_AUTHTOKEN })
-    //     .then(listener => console.log(`Ingress established at: ${listener.url()}`))
-    //     .catch((err) => console.log("ERROR on ngrok connection ", err));
+    ngrok.connect({ addr: 5000, authtoken: process.env.NGROK_AUTHTOKEN })
+        .then(listener => console.log(`Ingress established at: ${listener.url()}`))
+        .catch((err) => console.log("ERROR on ngrok connection ", err));
     
 })
 .catch((err) => {
