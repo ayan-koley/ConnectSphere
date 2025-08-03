@@ -1,6 +1,6 @@
 import { useAuth } from '@clerk/clerk-react';
 import React, { useTransition, useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { HeartPlus } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -10,12 +10,14 @@ import { useDispatch } from 'react-redux';
 const FavoriteButton = ({postId, favorite}) => {
     const [isFavorite, setIsFavorite] = useState(favorite);
         const[isPending, startTransition] = useTransition();
-        const { getToken } = useAuth();
+        const { getToken, isSignedIn } = useAuth();
         const dispatch = useDispatch();
+        const navigate = useNavigate();
 
         const toggleFavorite = () => {
             startTransition(async() => {
                 try {
+                    if(!isSignedIn) return navigate("/sign-in")
                     const token = await getToken();
                     setIsFavorite((prev) => !prev);
                     const response = await axios.patch(`${import.meta.env.VITE_DB_URI}/api/v1/favorite/post/toggle/${postId}`, {}, {

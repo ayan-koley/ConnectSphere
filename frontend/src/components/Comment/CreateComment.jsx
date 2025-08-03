@@ -3,7 +3,7 @@ import axios from 'axios';
 import React, { useTransition, useEffect } from 'react'
 import {useForm} from 'react-hook-form'
 import { useDispatch } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { PulseLoader } from 'react-spinners';
 import { addComment } from '../../store/commentSlice';
 import { Input } from "@/components/ui/input"
@@ -14,17 +14,18 @@ const CreateComment = () => {
     const { postId } = useParams();
     const { register, handleSubmit, formState: { errors }, setValue } = useForm();
     const [isPending, startTransition] = useTransition();
-    const {getToken} = useAuth();
+    const {getToken, isSignedIn} = useAuth();
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const submit = (data) => {
         startTransition(async() => {
             try {
-                const formData = new FormData();
-                formData.append('content', data.content);
-                console.log(formData.content);
+                if(!isSignedIn) return navigate("/sign-in")
                 const token = await getToken();
-                const response = await axios.post(`${import.meta.env.VITE_DB_URI}/api/v1/comment/post/${postId}`, formData, {
+                const response = await axios.post(`${import.meta.env.VITE_DB_URI}/api/v1/comment/post/${postId}`, {
+                    content: data.content
+                }, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     }
@@ -33,7 +34,7 @@ const CreateComment = () => {
                 setValue('content', '');
                 dispatch(addComment({
                     postId,
-                    comment: response.comment
+                    comment: response.data[0]
                 }))
             } catch (err) {
                 toast.error(err.message);
@@ -52,7 +53,7 @@ const CreateComment = () => {
         <form onSubmit={handleSubmit(submit)} className='px-5 flex gap-3'>
             <Input className="max-w-md" placeholder="Write Comment" {...register('content', { required: "Please enter a valid comment content" })} />
             <Button variant="outline" className="cursor-pointer" type="submit" disabled={isPending}>
-                {isPending ? <PulseLoader /> : 'Submit'}
+                {isPending ? <PulseLoader size={6}  color='white' /> : 'Submit'}
             </Button>
         </form>
     </div>

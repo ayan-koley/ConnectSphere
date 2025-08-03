@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom'
 import FavoriteButton from "../FavoriteButton";
 import LikeButton from "../LikeButton";
 import { useSelector } from "react-redux";
+import { postTimeConverter } from "../../utils/calculatePostTime";
 
 const PostCard = ({ post }) => {
     const navigate = useNavigate();
@@ -20,7 +21,7 @@ return (
                     <AuthAvatar src={post.avatar.image} className={"h-10 w-10"} />
                     <div>
                         <p className="font-semibold text-sm">{post.userDetails.firstName} {post.userDetails.lastName}</p>
-                        <p className="text-xs text-muted-foreground">{post.userDetails.username} · {post?.createdAt}</p>
+                        <p className="text-xs text-muted-foreground">{post.userDetails.username} · {postTimeConverter(post?.createdAt)}</p>
                     </div>
                 </div>
             </div>

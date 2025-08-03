@@ -10,6 +10,7 @@ import { login } from './store/authSlice.js'
 import { fetchGlobalFeed } from './store/feedSlice.js'
 import { setMode } from './store/themeSlice.js'
 import { setReactions } from './store/reactionSlice.js'
+import { setFollowing } from './store/followingSlice.js'
 
 const App = () => {
 
@@ -26,7 +27,7 @@ const App = () => {
               Authorization: `Bearer ${token}`,
             },
           });
-          dispatch(fetchGlobalFeed(token))
+          
           dispatch(login(profileDetails.data?.data))
           toast.success("User Login Successfully");
         } catch (error) {
@@ -51,15 +52,29 @@ const App = () => {
         toast.error(err.message);
     }
   }
+  const getFollowingIds = async() => {
+      try {
+          const token = await getToken();
+          await axios.get(`${import.meta.env.VITE_DB_URI}/api/v1/relation/total`, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }).then(res => dispatch(setFollowing(res.data.data)));
+      } catch (err) {
+        toast.error(err.message);
+      }
+    }
   // api call for get user details and also gate all reactions details
   useEffect(() => {
     const fetchData = async() => {
       await getUserDetails();
       await getReactions();
+      await getFollowingIds();
     }
     if(isSignedIn) {
         fetchData();
     } 
+    dispatch(fetchGlobalFeed())
   }, [isSignedIn])
 
   // api call for take theme mode

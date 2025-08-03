@@ -15,13 +15,15 @@ import {useDispatch, useSelector} from 'react-redux'
 import { useAuth } from '@clerk/clerk-react';
 import { addToFeed } from '../../store/feedSlice';
 import { SyncLoader  } from 'react-spinners'
+import { useNavigate } from 'react-router-dom';
 
 const CreatePost = ({post}) => {
 
     const {register, formState: { errors }, handleSubmit, setValue, control} = useForm();
     const userData = useSelector(state => state.authSlice.userData);
-    const {getToken} = useAuth();
+    const {getToken, isSignedIn} = useAuth();
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const [isPending, startTransition] = useTransition();
     const [suggestions, setSuggestions] = useState([]);
@@ -32,6 +34,7 @@ const CreatePost = ({post}) => {
     const submit = (data) => {
         startTransition(async() => {
             try {
+                if(!isSignedIn) return navigate("/sign-in")
                 const { hashtags, mentions } = extractTagsAndMentions(data.description);
                 const mentionsUserid = mentions?.map((m) => mentionMap[m]);
                 const formData = new FormData();
@@ -141,8 +144,9 @@ const CreatePost = ({post}) => {
                 </div>
                 {suggestions && (
                     <div className='relative p-4 ml-12 mt-5 rounded-xs'>
-                    { suggestions.map((user) => (
-                        <div key={user._id} className='flex gap-3 cursor-pointer mt-4 hover:bg-accent/50 border px-3 py-2 rounded-md ' onClick={() => handleSelectUser(user)}>
+                    { suggestions.map((user) => {
+                        return user.userId !== userData?._id && (
+                            <div key={user._id} className='flex gap-3 cursor-pointer mt-4 hover:bg-accent/50 border px-3 py-2 rounded-md ' onClick={() => handleSelectUser(user)}>
                             <div className='flex gap-3 items-center'>
                                 <AuthAvatar src={user.avatar?.image} className={'h-10 w-10'} />
                             </div>
@@ -151,7 +155,8 @@ const CreatePost = ({post}) => {
                                 <span>@{user.username}</span>
                             </div>
                         </div>
-                    ))}
+                        )
+                    })}
                 </div>
                 )}
                 

@@ -8,8 +8,7 @@ import { toast } from 'react-hot-toast'
 import PostCard from '../PostCard/PostCard';
 import ProfileTabSkeleton from '../Skeleton/ProfileTabSkeleton';
 
-const ProfileTabs = () => {
-    const { userId } = useParams();
+const ProfileTabs = ({userId}) => {
     const [isPending, startTransition] = useTransition()
 
     const [tab, setTab] = React.useState("posts");

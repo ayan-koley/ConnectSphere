@@ -12,7 +12,8 @@ const HomePage = () => {
      const navigate = useNavigate();
     const posts = useSelector(state => state.feedSlice.posts)
 return posts && posts.length > 0 ? (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+    // grid grid-cols-1 lg:grid-cols-3
+        <div className="flex flex-col md:flex-row gap-6 max-w-6xl mx-auto">
         {/* Main Feed */}
             <div className="lg:col-span-2">
                 <CreatePost />

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useTransition } from 'react'
 import AuthAvatar from '../Header/AuthAvatar';
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
-import { useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import axios from 'axios';
 import ProfileDetailsSkeleton from '../Skeleton/ProfileDetailsSkeleton';
@@ -11,15 +11,18 @@ import UnFollowButton from '../UnFollowButton';
 import { useAuth } from '@clerk/clerk-react';
 import { useSelector } from 'react-redux'
 
-const ProfileDetails = () => {
+const ProfileDetails = ({userId}) => {
+    const navigate = useNavigate();
+    const {isSignedIn} = useAuth()
     const [isPending, startTransition] = useTransition()
-    const { userId } = useParams();
     const [userData, setUserData] = useState({});
-    const [isFollow, setIsFollow] = useState(true);
-    const {getToken} = useAuth()
-    const {_id} = useSelector(state => state.authSlice?.userData);
-    console.log(_id);
-    console.log(userData._id);
+    const {status} = useSelector(state => state.authSlice);
+    if(!status) {
+        return navigate("/sign-in")
+    }
+    const {_id} = useSelector(state => state.authSlice.userData);
+    const followingIds = useSelector(state => state.following.followingIds);
+
 
     const fetchDashboardData = async() => {
         startTransition(async() => {
@@ -32,33 +35,15 @@ const ProfileDetails = () => {
         })
     }
 
-    const isFollowTheUser = () => {
-        startTransition(async() => {
-            try {
-                const token = await getToken();
-                await axios.get(`${import.meta.env.VITE_DB_URI}/api/v1/relation/following/status`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                }).then(res => setIsFollow(res.data.data));
-            } catch (err) {
-                
-            }
-        })
-    }
 
     useEffect(() => {
-        if(Object.keys(userData).length === 0) {
+        if(isSignedIn) {
             const fetchData = async() => {
                 await fetchDashboardData();
             }
             fetchData();
         }
-    }, [])
-
-    useEffect(() => {
-        isFollowTheUser();
-    }, [])
+    }, [userId])
 
 
   return !isPending && Object.keys(userData).length > 0 ? (
@@ -83,7 +68,7 @@ const ProfileDetails = () => {
                         <div>
                     {
                         
-                    isFollow ? (
+                    !followingIds.includes(userId) ? (
                         <div onClick={() => setIsFollow(false)}>
                             <FollowButton userId={userData._id} />
                         </div>
@@ -96,12 +81,17 @@ const ProfileDetails = () => {
                 </div>
                     )
                 }
-                <Button 
-                    variant="ghost" 
-                    className="glass-button font-medium px-6 py-2 rounded-full transition-all hover:scale-105"
-                >
-                    Edit Profile
-                </Button>
+                {
+                    userId === _id && (
+                        <Button 
+                            variant="ghost" 
+                            className="glass-button font-medium px-6 py-2 rounded-full transition-all hover:scale-105 cursor-pointer"
+                            onClick={() => navigate("/view")}
+                        >
+                            Edit Profile
+                        </Button>
+                    )
+                }
             </div>
 
             {/* Stats with separator */}

@@ -5,11 +5,7 @@ export const fetchGlobalFeed = createAsyncThunk(
     "fetch/globalFeed",
     async(token, thunkApi) => {
         try {
-            const response = await axios.get(`${import.meta.env.VITE_DB_URI}/api/v1/feed`, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            }).then((res) => res.data);
+            const response = await axios.get(`${import.meta.env.VITE_DB_URI}/api/v1/feed`).then((res) => res.data);
             return response.data;
         } catch (error) {
             return thunkApi.rejectWithValue(error.response?.data?.message);

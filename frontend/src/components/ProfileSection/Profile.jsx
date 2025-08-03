@@ -1,25 +1,17 @@
-import React, { useState, useTransition } from 'react'
+import React from 'react'
 import ProfileDetails from './ProfileDetails'
 import { Separator } from "@/components/ui/separator"
 import ProfileTabs from './ProfileTabs'
-import { Outlet } from 'react-router-dom'
-import ProfileSkeleton from '../Skeleton/ProfileSkeleton'
 
-
-const Profile = () => {
-  const [isPending, startTransition] = useTransition()
-    
-  return !isPending ? (
-    <>
+const Profile = ({userId}) => {
+ 
+  return  (
       <div className="min-h-screen bg-background">
-        <ProfileDetails />
+        <ProfileDetails userId={userId} />
         <Separator className="mb-8" />
-        <ProfileTabs />
-    </div>
-    </>
-  ) : (
-    <ProfileSkeleton />
-  )
+        <ProfileTabs  userId={userId} />
+      </div>
+    )
 }
 
 export default Profile

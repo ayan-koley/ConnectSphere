@@ -8,18 +8,21 @@ import { toast } from 'react-hot-toast'
 import { useEffect } from 'react';
 import { useAuth } from '@clerk/clerk-react'
 import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 const LikeButton = ({totalLikes=0, id, type="post", liked}) => {
     const [isLiked, setIsLiked] = useState(liked);
     const[isPending, startTransition] = useTransition();
     const [likes, setLikes] = useState(totalLikes);
-    const { getToken } = useAuth();
+    const { getToken, isSignedIn } = useAuth();
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     
     const toggleLike = () => {
         startTransition(async() => {
             try {
+                if(!isSignedIn) return navigate("/sign-in")
                 const token = await getToken();
                 setIsLiked((prev) => !prev);
                 setLikes((prev) => isLiked ? prev - 1 : prev + 1);
