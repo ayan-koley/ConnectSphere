@@ -304,17 +304,19 @@ const getSuggestedUsers = asyncHandler(async(req, res) => {
         {
             $limit: 20
         }
-    ])
+        ])
 
-        return res
-        .status(200)
-        .json(
-            new ApiResponse(
-                200,
-                users,
-                "Suggest friend successfully"
+        if(users.length > 0) {
+            return res
+            .status(200)
+            .json(
+                new ApiResponse(
+                    200,
+                    users,
+                    "Suggest friend successfully"
+                )
             )
-        )
+        }
     } 
     const users = await User.aggregate([
         {
