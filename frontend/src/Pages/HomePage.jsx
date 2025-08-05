@@ -4,7 +4,6 @@ import CreatePost from "../components/CreatePost/CreatePost.jsx";
 import PostCard from "../components/PostCard/PostCard.jsx";
 import FriendSuggestion from '../components/FriendSuggestion/FriendSuggestion.jsx';
 import { useSelector } from 'react-redux';
-import PostSkeleton from '../components/Skeleton/PostSkeleton.jsx';
 import HomePageSkeleton from '../components/Skeleton/HomePageSkeleton.jsx';
 import { useNavigate } from 'react-router-dom';
 
@@ -13,7 +12,7 @@ const HomePage = () => {
     const posts = useSelector(state => state.feedSlice.posts)
 return posts && posts.length > 0 ? (
     // grid grid-cols-1 lg:grid-cols-3
-        <div className="flex flex-col md:flex-row gap-6 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
         {/* Main Feed */}
             <div className="lg:col-span-2">
                 <CreatePost />
@@ -27,7 +26,7 @@ return posts && posts.length > 0 ? (
             </div>
 
             {/* Right Sidebar */}
-            <div className="lg:col-span-1">
+            <div>
                 <div className="sticky top-20">
                 <FriendSuggestion />
                 </div>
