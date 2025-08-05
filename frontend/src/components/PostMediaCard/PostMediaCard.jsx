@@ -21,7 +21,7 @@ const PostMediaCard = ({mediaData=[]}) => {
     <div className='mt-3'>
         {/* Media Viewer */}
         <div className="relative max-w-2xl aspect-video bg-black rounded-lg overflow-hidden">
-        {currentMedia?.url.includes('.mp4') ? (
+        {currentMedia?.url?.includes('.mp4') ? (
             <video
             src={currentMedia.url}
             controls
@@ -31,7 +31,7 @@ const PostMediaCard = ({mediaData=[]}) => {
             <img
             src={currentMedia.url}
             alt={`media-${currentIndex}`}
-            className="object-cover w-full h-full"
+            className="object-contain w-full h-full"
             />
         )}
 

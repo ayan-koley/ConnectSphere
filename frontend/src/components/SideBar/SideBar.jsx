@@ -9,7 +9,7 @@ const SideBar = () => {
     const menuItems = [
     { id: "home", label: "Home", icon: Home, path: "/" },
     // { id: "explore", label: "Explore", icon: Search },
-    { id: "messages", label: "Messages", icon: MessageCircle, path: "/message" },
+    // { id: "messages", label: "Messages", icon: MessageCircle, path: "/message" },
     { id: "favorites", label: "Favorites", icon: Heart, path: "/favorites" },
     { id: "profile", label: "Profile", icon: User, path: `/profile/${userData?._id}` },
   ];
