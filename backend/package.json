@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "start": "node -r dotenv/config --experimental-json-modules src/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "cd backend && npm run build"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
@@ -14,6 +13,7 @@
   "dependencies": {
     "@clerk/express": "^1.7.9",
     "@ngrok/ngrok": "^1.5.1",
+    "@railway/cli": "^4.6.1",
     "cors": "^2.8.5",
     "dotenv": "^17.2.0",
     "express": "^5.1.0",

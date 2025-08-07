@@ -27,7 +27,52 @@ const dashboardController = asyncHandler(async (req, res) => {
                 from: "posts",
                 localField: "_id",
                 foreignField: "userId",
-                as: "posts"
+                as: "posts",
+                pipeline: [
+                    {
+                        $lookup: {
+                            from: "users",
+                            localField: "userId",
+                            foreignField: "_id",
+                            as: "avatar",
+                            pipeline: [
+                                {
+                                    $project: {
+                                        _id: 0,
+                                        image: 1
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from: "userprofiles",
+                            localField: "userId",
+                            foreignField: "userId",
+                            as: "userDetails",
+                            pipeline: [
+                                {
+                                    $project: {
+                                        username: 1,
+                                        firstName: 1,
+                                        lastName: 1
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        $addFields: {
+                            avatar: {
+                                $first: "$avatar"
+                            },
+                            userDetails: {
+                                $first: "$userDetails"
+                            }
+                        }
+                    }
+                ]
             }
         },
         {
@@ -35,7 +80,52 @@ const dashboardController = asyncHandler(async (req, res) => {
                 from: "posts",
                 localField: "_id",
                 foreignField: "mention",
-                as: "mentionPosts"
+                as: "mentionPosts",
+                pipeline: [
+                    {
+                        $lookup: {
+                            from: "users",
+                            localField: "userId",
+                            foreignField: "_id",
+                            as: "avatar",
+                            pipeline: [
+                                {
+                                    $project: {
+                                        _id: 0,
+                                        image: 1
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from: "userprofiles",
+                            localField: "userId",
+                            foreignField: "userId",
+                            as: "userDetails",
+                            pipeline: [
+                                {
+                                    $project: {
+                                        username: 1,
+                                        firstName: 1,
+                                        lastName: 1
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        $addFields: {
+                            avatar: {
+                                $first: "$avatar"
+                            },
+                            userDetails: {
+                                $first: "$userDetails"
+                            }
+                        }
+                    }
+                ]
             }
         },
         {
