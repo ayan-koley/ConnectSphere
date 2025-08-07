@@ -37,7 +37,7 @@ const ProfileDropdown = ({status, src}) => {
                 </DropdownMenuItem> */}
                 <DropdownMenuItem>
                     <LogOut className='mr-2 h-4 w-4' />
-                    <SignOutButton signOutOptions={sessionId}>
+                    <SignOutButton signOutOptions={sessionId} redirectUrl='/'>
                         Sign Out
                     </SignOutButton>
                 </DropdownMenuItem>
