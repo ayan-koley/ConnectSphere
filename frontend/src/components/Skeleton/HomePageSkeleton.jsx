@@ -23,7 +23,6 @@ const HomePageSkeleton = () => {
                 ))
             }
         </div>
-        <FriendSuggestionSkeleton />
     </div>
   )
 }

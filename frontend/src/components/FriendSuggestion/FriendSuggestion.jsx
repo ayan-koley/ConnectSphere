@@ -18,8 +18,8 @@ const userSuggestion = () => {
     const [isOpenSuggestion, setIsOpenSuggestion] = useState(false);
     const navigate = useNavigate();
     const {users, pending} = useSelector(state => state.friendSuggestionSlice);
-
-
+    const { isSignedIn} = useAuth();
+    if(!isSignedIn) return null;
   return !pending  ? (
     <div>
         {
