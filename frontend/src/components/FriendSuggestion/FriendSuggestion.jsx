@@ -57,7 +57,7 @@ const userSuggestion = () => {
                                 {isOpenSuggestion &&  users.slice(5, users.length).map((user) => (
                                     <div key={user._id} className="flex items-center justify-between">
                                     <div className="flex items-center space-x-3">
-                                    <div className="relative">
+                                    <div className="relative" onClick={() => navigate(`/profile/${user._id}`)}>
                                         <AuthAvatar src={user.image} className={'h-10 w-10'} />
                                     </div>
                                     <div>
