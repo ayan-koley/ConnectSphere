@@ -1,14 +1,16 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
-import { RouterProvider } from 'react-router-dom'
+import { RouterProvider,  } from 'react-router-dom'
 import { router } from './routes/router.jsx'
 import { ClerkProvider } from '@clerk/clerk-react'
 import { Provider } from 'react-redux'
 import store from './store/store.js'
 
+const navigate = useNavigate();
+
 createRoot(document.getElementById('root')).render(
-    <ClerkProvider publishableKey='pk_test_YWRhcHRlZC1zd2FuLTQxLmNsZXJrLmFjY291bnRzLmRldiQ'>
+    <ClerkProvider publishableKey='pk_test_YWRhcHRlZC1zd2FuLTQxLmNsZXJrLmFjY291bnRzLmRldiQ' navigate={(to) => navigate(to)} >
       <Provider store={store}>
         <RouterProvider router={router} />
       </Provider>
