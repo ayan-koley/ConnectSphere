@@ -4,9 +4,8 @@ import { getSuggestedUsers, globalFeed } from '../../controllers/feed/feed.contr
 import { requiredAuth } from '../../middlewares/requiredAuth.js';
 
 const router = Router();
-router.use(IP);
 
-router.route("/").get(globalFeed);
+router.route("/").get(IP, globalFeed);
 router.route("/user").get(requiredAuth, getSuggestedUsers);
 
 export default router;

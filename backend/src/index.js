@@ -1,9 +1,10 @@
 import { app } from "./App.js";
 import connectDB from "./config/db.js";
 import dotenv from 'dotenv'
-import ngrok from '@ngrok/ngrok'
-dotenv.config()
-
+import path, { dirname } from 'path'
+dotenv.config({
+    path: '../.env'
+});
 
 connectDB()
 .then(() => {

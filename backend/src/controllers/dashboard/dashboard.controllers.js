@@ -32,6 +32,14 @@ const dashboardController = asyncHandler(async (req, res) => {
         },
         {
             $lookup: {
+                from: "posts",
+                localField: "_id",
+                foreignField: "mention",
+                as: "mentionPosts"
+            }
+        },
+        {
+            $lookup: {
                 from: "comments",
                 localField: "_id",
                 foreignField: "userId",
@@ -62,7 +70,9 @@ const dashboardController = asyncHandler(async (req, res) => {
                 commentsCount: { $size: "$comments" },
                 followersCount: { $size: "$followers" },
                 followingCount: { $size: "$following" },
-                userDetails: { $first: "$userDetails"}
+                userDetails: { $first: "$userDetails"},
+                mentionPosts: 1,
+                posts: 1
             }
         }
     ])

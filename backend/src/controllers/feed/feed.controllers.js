@@ -258,70 +258,13 @@ const getSuggestedUsers = asyncHandler(async(req, res) => {
     const userFollowingUser = await FollowRelationship.find({
         followedUserId: user._id
     })
+    const userFollowingIds = userFollowingUser?.map((u) => u.userId);
+    const excludeIds = [user._id, ...userFollowingIds];
 
-    if(userFollowingUser.length > 0) {
-        const userFollowingUserId = userFollowingUser?.map((f) => f.userId);
-
-        const suggestionUsers = await FollowRelationship.find(
-            {
-                followedUserId: { $in: userFollowingUserId }
-            }
-        ).limit(20);
-
-        const filterOutSimilars = suggestionUsers?.filter((u) => !userFollowingUserId.some(id => id.equals(u?.userId)));
-
-        // ✅ Extract user IDs
-        const suggestedUserIds = filterOutSimilars.map(u => u.userId);
-
-
-        const users = await User.aggregate([
-        {
-            $match: {
-                _id: {$in: suggestedUserIds}
-            }
-        },
-        {
-            $lookup: {
-                from: "userprofiles",
-                foreignField: "userId",
-                localField: "_id",
-                as: "userDetails"
-            }
-        },
-        {
-            $addFields: {
-                userDetails: {
-                    $first: "$userDetails"
-                }
-            }
-        },
-        {
-            $project: {
-                image: 1,
-                userDetails: 1
-            }
-        },
-        {
-            $limit: 20
-        }
-        ])
-
-        if(users.length > 0) {
-            return res
-            .status(200)
-            .json(
-                new ApiResponse(
-                    200,
-                    users,
-                    "Suggest friend successfully"
-                )
-            )
-        }
-    } 
     const users = await User.aggregate([
         {
             $match: {
-                _id: {$ne: user._id}
+                _id: {$nin: excludeIds}
             }
         },
         {
