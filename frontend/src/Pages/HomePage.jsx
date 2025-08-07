@@ -24,7 +24,6 @@ return posts && posts.length > 0 ? (
                 ))}
                 </div>
             </div>
-
             {/* Right Sidebar */}
             <div>
                 <div className="sticky top-20">

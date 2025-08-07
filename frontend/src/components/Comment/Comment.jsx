@@ -8,6 +8,7 @@ import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchComment } from '../../store/commentSlice'
 import LikeButton from '../LikeButton'
+import { postTimeConverter } from '../../utils/calculatePostTime'
 const Comment = ({postId}) => {
 
     const comments = useSelector(state => state.comments.byPostId[postId]);
@@ -41,11 +42,11 @@ const Comment = ({postId}) => {
                             <h4 className="font-semibold text-sm">{comment.userDetails.firstName} {comment.userDetails.lastName}</h4>
                             <span className="text-muted-foreground text-sm">@{comment.userDetails.username}</span>
                             <span className="text-muted-foreground text-sm">·</span>
-                            <span className="text-muted-foreground text-sm">{comment.createdAt}</span>
+                            <span className="text-muted-foreground text-sm">{postTimeConverter(comment.createdAt)}</span>
                             </div>
                             <p className="text-foreground text-sm leading-relaxed">{comment.content}</p>
                         </div>
-                            <LikeButton id={comment._id} totalLikes={comment.totalLikes} type='comment' />
+                            {/* <LikeButton id={comment._id} totalLikes={comment.totalLikes} type='comment' /> */}
                         </div>
                     </div>
                     </Card>

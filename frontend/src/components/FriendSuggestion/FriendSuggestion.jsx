@@ -11,39 +11,16 @@ import { useAuth } from '@clerk/clerk-react'
 import FollowButton from '../FollowButton'
 import FriendSuggestionSkeleton from '../Skeleton/FriendSuggestionSkeleton'
 import { useNavigate } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { addToSuggestion } from '../../store/friendSuggestionSlice'
 
 const userSuggestion = () => {
-    const [users, setUsers] = useState([]);
     const [isOpenSuggestion, setIsOpenSuggestion] = useState(false);
-    const [isPending, startTransition] = useTransition();
-    const { getToken, isSignedIn } = useAuth();
     const navigate = useNavigate();
-    const followingIds = useSelector(state => state.following.followingIds);
-
-    const fetchSuggestionUsers = () => {
-        startTransition(async() => {
-            try {
-                const token = await getToken();
-                await axios.get(`${import.meta.env.VITE_DB_URI}/api/v1/feed/user`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                }).then(res => setUsers(res.data.data)).catch((err) => toast.error(err.message));
-            } catch (err) {
-                toast.error(err.message);
-            }
-        })
-    }
-
-    useEffect(() => {
-        if(isSignedIn) {
-            fetchSuggestionUsers();
-        }
-    }, [])
+    const {users, pending} = useSelector(state => state.friendSuggestionSlice);
 
 
-  return !isPending  ? (
+  return !pending  ? (
     <div>
         {
             users.length > 0 && (
@@ -52,17 +29,36 @@ const userSuggestion = () => {
                         <CardTitle className="text-lg font-semibold">Suggested for you</CardTitle>
                     </CardHeader>
 
-                    <CardContent className="space-y-4">
-                        {users.length > 0 && users.map((user) => {
-                            return !followingIds.includes(user._id) && (
-                                <div key={user._id} className="flex items-center justify-between">
+                    {
+                        users.length > 5 ? (
+                            <CardContent className="space-y-4">
+                                {users.slice(0, 5).map((user) => (
+                                        <div key={user._id} className="flex items-center justify-between">
+                                            <div className="flex items-center space-x-3">
+                                            <div className="relative" onClick={() => navigate(`/profile/${user._id}`)}>
+                                                <AuthAvatar src={user.image} className={'h-10 w-10'} />
+                                                {/* user Online so blue circle */}
+                                                {/* {user.isOnline && (
+                                                <div className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full bg-blue-500 border-2 border-background"></div>
+                                                )} */}
+                                            </div>
+                                            <div>
+                                                <p className="font-medium text-sm">{user.userDetails.firstName}</p>
+                                                <p className="text-xs text-muted-foreground">{user.userDetails.lastName}</p>
+                                            </div>
+                                            </div>
+                                            <FollowButton userId={user._id} follow={false} />
+                                        </div>
+                                    )
+                                )}
+                                <Button variant="ghost" className={`w-full mt-4 text-primary cursor-pointer ${isOpenSuggestion && 'hidden'}`} onClick={() => setIsOpenSuggestion((prev) => !prev)}>
+                                    See all suggestions
+                                </Button>
+                                {isOpenSuggestion &&  users.slice(5, users.length).map((user) => (
+                                    <div key={user._id} className="flex items-center justify-between">
                                     <div className="flex items-center space-x-3">
-                                    <div className="relative" onClick={() => navigate(`/profile/${user._id}`)}>
+                                    <div className="relative">
                                         <AuthAvatar src={user.image} className={'h-10 w-10'} />
-                                        {/* user Online so blue circle */}
-                                        {/* {user.isOnline && (
-                                        <div className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full bg-blue-500 border-2 border-background"></div>
-                                        )} */}
                                     </div>
                                     <div>
                                         <p className="font-medium text-sm">{user.userDetails.firstName}</p>
@@ -71,30 +67,34 @@ const userSuggestion = () => {
                                     </div>
                                     <FollowButton userId={user._id} follow={false} />
                                 </div>
-                            )
-                        })}
-                        {
-                            users.length > 5 && (
-                                <Button variant="ghost" className={`w-full mt-4 text-primary ${isOpenSuggestion && 'hidden'}`}>
-                                    See all suggestions
-                                </Button>
-                            )
-                        }
-                        {isOpenSuggestion && users.length > 0 && users.slice(5, users.length).map((user) => (
-                            <div key={user._id} className="flex items-center justify-between">
-                            <div className="flex items-center space-x-3">
-                            <div className="relative">
-                                <AuthAvatar src={user.image} className={'h-10 w-10'} />
-                            </div>
-                            <div>
-                                <p className="font-medium text-sm">{user.userDetails.firstName}</p>
-                                <p className="text-xs text-muted-foreground">{user.userDetails.lastName}</p>
-                            </div>
-                            </div>
-                            {/* <FollowButton userId={user._id} /> */}
-                        </div>
-                        ))}
-                    </CardContent>
+                                ))}
+                            </CardContent>
+                        ) : (
+                            <CardContent className="space-y-4">
+                                {users.map((user) => (
+                                        <div key={user._id} className="flex items-center justify-between">
+                                            <div className="flex items-center space-x-3">
+                                            <div className="relative" onClick={() => navigate(`/profile/${user._id}`)}>
+                                                <AuthAvatar src={user.image} className={'h-10 w-10'} />
+                                                {/* user Online so blue circle */}
+                                                {/* {user.isOnline && (
+                                                <div className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full bg-blue-500 border-2 border-background"></div>
+                                                )} */}
+                                            </div>
+                                            <div>
+                                                <p className="font-medium text-sm">{user.userDetails.firstName}</p>
+                                                <p className="text-xs text-muted-foreground">{user.userDetails.lastName}</p>
+                                            </div>
+                                            </div>
+                                            <FollowButton userId={user._id} follow={false} />
+                                        </div>
+                                    )
+                                )}
+                            </CardContent>
+                        )
+                    }
+
+                    
                 </Card>
             )
         }

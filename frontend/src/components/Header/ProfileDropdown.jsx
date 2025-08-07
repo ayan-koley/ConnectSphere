@@ -31,10 +31,10 @@ const ProfileDropdown = ({status, src}) => {
                     <User className='mr-2 h-4 w-4'/>
                     <span>Profile</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate("/setting")}>
+                {/* <DropdownMenuItem onClick={() => navigate("/setting")}>
                     <UserCog className='mr-2 h-4 w-4' />
                     <span>Setting</span>
-                </DropdownMenuItem>
+                </DropdownMenuItem> */}
                 <DropdownMenuItem>
                     <LogOut className='mr-2 h-4 w-4' />
                     <SignOutButton signOutOptions={sessionId}>

@@ -11,39 +11,11 @@ import UnFollowButton from '../UnFollowButton';
 import { useAuth } from '@clerk/clerk-react';
 import { useSelector } from 'react-redux'
 
-const ProfileDetails = ({userId}) => {
+const ProfileDetails = ({userData, isPending}) => {
     const navigate = useNavigate();
-    const {isSignedIn} = useAuth()
-    const [isPending, startTransition] = useTransition()
-    const [userData, setUserData] = useState({});
-    const {status} = useSelector(state => state.authSlice);
-    if(!status) {
-        return navigate("/sign-in")
-    }
     const {_id} = useSelector(state => state.authSlice.userData);
     const followingIds = useSelector(state => state.following.followingIds);
 
-
-    const fetchDashboardData = async() => {
-        startTransition(async() => {
-            try {
-                const response = await axios.get(`${import.meta.env.VITE_DB_URI}/api/v1/dashboard/${userId}`).then(res => res.data);
-                setUserData(response.data[0]);
-            } catch (err) {
-                toast.error(err.message);
-            }
-        })
-    }
-
-
-    useEffect(() => {
-        if(isSignedIn) {
-            const fetchData = async() => {
-                await fetchDashboardData();
-            }
-            fetchData();
-        }
-    }, [userId])
 
 
   return !isPending && Object.keys(userData).length > 0 ? (
@@ -68,7 +40,7 @@ const ProfileDetails = ({userId}) => {
                         <div>
                     {
                         
-                    !followingIds.includes(userId) ? (
+                    !followingIds.includes(userData._id) ? (
                         <div onClick={() => setIsFollow(false)}>
                             <FollowButton userId={userData._id} />
                         </div>
@@ -82,7 +54,7 @@ const ProfileDetails = ({userId}) => {
                     )
                 }
                 {
-                    userId === _id && (
+                    userData._id === _id && (
                         <Button 
                             variant="ghost" 
                             className="glass-button font-medium px-6 py-2 rounded-full transition-all hover:scale-105 cursor-pointer"

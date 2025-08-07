@@ -27,6 +27,7 @@ const UnFollowButton = ({userId}) => {
                     }
                 })
                 dispatch(toggleFollowing(userId));
+                toast.success("Successfully Unfollow")
             } catch (err) {
                 toast.error(err.message);
             }

@@ -11,6 +11,7 @@ import { fetchGlobalFeed } from './store/feedSlice.js'
 import { setMode } from './store/themeSlice.js'
 import { setReactions } from './store/reactionSlice.js'
 import { setFollowing } from './store/followingSlice.js'
+import { addToSuggestion } from './store/friendSuggestionSlice.js'
 
 const App = () => {
 
@@ -64,12 +65,26 @@ const App = () => {
         toast.error(err.message);
       }
     }
-  // api call for get user details and also gate all reactions details
+
+  const fetchSuggestionUsers = async() => {
+    try {
+        const token = await getToken();
+        await axios.get(`${import.meta.env.VITE_DB_URI}/api/v1/feed/user`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }).then(res => dispatch(addToSuggestion(res.data.data))).catch((err) => toast.error(err.message));
+    } catch (err) {
+        toast.error(err.message);
+    }
+  }
+  // api call for get user details and also gate all reactions details, suggest friend
   useEffect(() => {
     const fetchData = async() => {
       await getUserDetails();
       await getReactions();
       await getFollowingIds();
+      await fetchSuggestionUsers();
     }
     if(isSignedIn) {
         fetchData();

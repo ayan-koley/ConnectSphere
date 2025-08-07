@@ -30,6 +30,7 @@ const FollowButton = ({userId}) => {
                     }
                 }).catch(err => toast.error(err.message));
                 dispatch(toggleFollowing(userId))
+                toast.success("Successfully Follow")
             } catch (err) {
                 toast.error(err.message);
             }

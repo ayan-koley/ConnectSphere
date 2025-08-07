@@ -88,7 +88,7 @@ const CreatePost = ({post}) => {
         setMentionMap((prev) => (
             {
                 ...prev,
-                [username]: user._id
+                [username]: user.userId
             }
         ));
         setSuggestions([]);

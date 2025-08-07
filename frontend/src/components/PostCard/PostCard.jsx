@@ -34,7 +34,7 @@ return (
             </div>
             
             <div className="flex items-center justify-between pt-2 border-t border-border">
-                <LikeButton id={post._id} totalLikes={post.totalLikes} type="post" liked={likedPostIds.includes(post._id.toString())} />
+                <LikeButton id={post._id} totalLikes={post.totalLikes} type="post" />
                 <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary">
                     <MessageCircle className="mr-2 h-4 w-4" />
                     {post.totalComments}

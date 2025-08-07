@@ -5,16 +5,22 @@ import { Button } from '@/components/ui/button';
 import { HeartPlus } from 'lucide-react';
 import toast from 'react-hot-toast';
 import axios from 'axios';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { toggleFavorite } from '../store/reactionSlice';
 
 const FavoriteButton = ({postId, favorite}) => {
-    const [isFavorite, setIsFavorite] = useState(favorite);
+    const favoritedPostIds = useSelector(state => state.reaction.favoritedPostIds);
+    const [isFavorite, setIsFavorite] = useState(favoritedPostIds.includes(postId));
         const[isPending, startTransition] = useTransition();
         const { getToken, isSignedIn } = useAuth();
         const dispatch = useDispatch();
         const navigate = useNavigate();
 
-        const toggleFavorite = () => {
+        useEffect(() => {
+            setIsFavorite(favoritedPostIds.includes(postId));
+        }, [favoritedPostIds])
+
+        const toggleFavorites = () => {
             startTransition(async() => {
                 try {
                     if(!isSignedIn) return navigate("/sign-in")
@@ -26,7 +32,6 @@ const FavoriteButton = ({postId, favorite}) => {
                         }
                     }).then(res => res.data).catch((err) => toast.error(err.message));
                     dispatch(toggleFavorite(postId));
-                    toast.success(response.message);
                 } catch(err) {
                     toast.error(err.message);
                 }
@@ -36,7 +41,7 @@ const FavoriteButton = ({postId, favorite}) => {
 
 
   return !isPending ? (
-    <div onClick={toggleFavorite} className='cursor-pointer'>
+    <div onClick={toggleFavorites} className='cursor-pointer'>
         <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary" disabled={isPending}>
             <HeartPlus className={`mr-2 h-4 w-4 ${isFavorite && 'text-red-500'}`} />
         </Button>

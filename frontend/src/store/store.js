@@ -7,6 +7,7 @@ import authSlice from './authSlice.js';
 import searchSlice from './searchSlice.js';
 import reactionSlice from './reactionSlice.js';
 import followingSlice from './followingSlice.js';
+import friendSuggestionSlice from './friendSuggestionSlice.js';
 
 const store = configureStore({
     reducer: {
@@ -17,7 +18,8 @@ const store = configureStore({
         feedSlice,
         comments: commentSlice,
         reaction: reactionSlice,
-        following: followingSlice
+        following: followingSlice,
+        friendSuggestionSlice
     }
 })
 

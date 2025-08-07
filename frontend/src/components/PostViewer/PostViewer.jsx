@@ -20,10 +20,13 @@ import { toast } from 'react-hot-toast'
 import axios from 'axios'
 import PostViewerSkeleton from '../Skeleton/PostViewerSkeleton'
 import LikeButton from '../LikeButton'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import CreateComment from '../Comment/CreateComment'
 import FavoriteButton from '../FavoriteButton'
 import PostCard from '../PostCard/PostCard'
+import { postTimeConverter } from '../../utils/calculatePostTime'
+import { useAuth } from '@clerk/clerk-react'
+import { removeToFeed } from '../../store/feedSlice'
 
 
 const PostViewer = () => {
@@ -32,6 +35,8 @@ const PostViewer = () => {
     const userData = useSelector(state => state.authSlice.userData);
     const navigate = useNavigate();
     const {likedPostIds, favoritedPostIds} = useSelector(state => state.reaction);
+    const { getToken } = useAuth();
+    const dispatch = useDispatch();
 
 
     const fetchPostData = async() => {
@@ -50,6 +55,21 @@ const PostViewer = () => {
         fetchPost();
     }, []);
 
+    const deletePost = async() => {
+        try {
+            const token = await getToken();
+            await axios.delete(`${import.meta.env.VITE_DB_URI}/api/v1/post/delete/${postId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            navigate("/")
+            dispatch(removeToFeed(postId));
+        } catch (err) {
+            toast.error(err.message);
+        }
+    }   
+
 
 return Object.keys(post).length > 0 ? (
     <div>
@@ -58,7 +78,7 @@ return Object.keys(post).length > 0 ? (
                             <CheckCircle className="h-5 w-5 text-social-verified fill-current" />
                         )} */}
         <Card className="border-0 border-b border-border rounded-none">
-            {/* <div className="p-4">
+            <div className="p-4">
                 <div className="flex items-start gap-3 mb-3">
                     <div onClick={() => navigate(`/profile/${post.userId}`)}>
                         <AuthAvatar src={post.avatar?.image} className={'h-12 w-12'}  />
@@ -76,11 +96,11 @@ return Object.keys(post).length > 0 ? (
                             </div>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>
-                            <DropdownMenuItem className="cursor-pointer">
+                            {/* <DropdownMenuItem className="cursor-pointer">
                                 <FilePenLine className='h-5 w-5' />
                                 Edit Post
-                            </DropdownMenuItem>
-                            <DropdownMenuItem className="cursor-pointer">
+                            </DropdownMenuItem> */}
+                            <DropdownMenuItem className="cursor-pointer" onClick={deletePost}>
                                 <FileX className='h-5 w-5' />
                                 Delete Post
                             </DropdownMenuItem>
@@ -91,7 +111,7 @@ return Object.keys(post).length > 0 ? (
 
                 <div className="mb-3">
                     <p className="text-foreground text-lg leading-relaxed mb-2">{post.description}</p>
-                    <p className="text-muted-foreground text-sm">2h</p>
+                    <p className="text-muted-foreground text-sm">{postTimeConverter(post.createdAt)}</p>
 
                     <PostMediaCard mediaData={post?.media} />
                 </div>
@@ -105,9 +125,9 @@ return Object.keys(post).length > 0 ? (
                     </Button>
                     <FavoriteButton postId={post._id} />
                 </div>
-            </div> */}
+            </div>
 
-            <PostCard post={post} />
+            {/* <PostCard post={post} /> */}
 
  
             <Separator />

@@ -8,44 +8,45 @@ import { toast } from 'react-hot-toast'
 import PostCard from '../PostCard/PostCard';
 import ProfileTabSkeleton from '../Skeleton/ProfileTabSkeleton';
 
-const ProfileTabs = ({userId}) => {
-    const [isPending, startTransition] = useTransition()
+const ProfileTabs = ({posts, mentionPost, isPending}) => {
 
     const [tab, setTab] = React.useState("posts");
-    const [posts, setPosts] = useState([]);
-    const [mentionPost, setMentionPost] = useState([]);
+    // const [posts, setPosts] = useState([]);
+    // const [mentionPost, setMentionPost] = useState([]);
 
-    const fetchPosts = async() => {
-        startTransition(async() => {
-            try {
-                const response = await axios.get(`${import.meta.env.VITE_DB_URI}/api/v1/post/user/${userId}`).then(res => res.data);
-                setPosts(response.data);
-            } catch (err) {
-                toast.error(err.message);
-            }
-        })
-    }
+    // const fetchPosts = async() => {
+    //     startTransition(async() => {
+    //         try {
+    //             const response = await axios.get(`${import.meta.env.VITE_DB_URI}/api/v1/post/user/${userId}`).then(res => res.data);
+    //             setPosts(response.data);
+    //         } catch (err) {
+    //             toast.error(err.message);
+    //         }
+    //     })
+    // }
 
-    const fetchMentionPost = async() => {
-        try {
-            const response = await axios.get(`${import.meta.env.VITE_DB_URI}/api/v1/post/user/mention/${userId}`).then(res => res.data);
-            setMentionPost(response.data);
-        } catch (err) {
-            toast.error(err.message);
-        }
-    }
+    // const fetchMentionPost = async() => {
+    //     try {
+    //         const response = await axios.get(`${import.meta.env.VITE_DB_URI}/api/v1/post/user/mention/${userId}`).then(res => res.data);
+    //         setMentionPost(response.data);
+    //     } catch (err) {
+    //         toast.error(err.message);
+    //     }
+    // }
 
-    useEffect(() => {
-        const fetchData = async() => {
-            if(tab === 'posts' && posts.length === 0) {
-                await fetchPosts();
-            } 
-            if(tab === 'mention' && mentionPost.length === 0) {
-                await fetchMentionPost();
-            }
-        }
-        fetchData();
-    }, [tab])
+    // useEffect(() => {
+    //     const fetchData = async() => {
+    //         if(tab === 'posts' && posts.length === 0) {
+    //             await fetchPosts();
+    //         } 
+    //         if(tab === 'mention' && mentionPost.length === 0) {
+    //             await fetchMentionPost();
+    //         }
+    //     }
+    //     fetchData();
+    // }, [tab])
+
+    console.log(mentionPost);
 
     return !isPending ? (
         <Tabs value={tab} onValueChange={(e) => {setTab(e)}} className="w-full">
@@ -67,7 +68,7 @@ const ProfileTabs = ({userId}) => {
             {/* Posts Grid */}
             <TabsContent value="posts" className="mt-8">
                 <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 gap-6">
-                {posts.map((post) => (
+                {posts?.map((post) => (
                     <div key={post.id}>
                         <PostCard post={post} />
                     </div>
@@ -77,7 +78,7 @@ const ProfileTabs = ({userId}) => {
 
             <TabsContent value="tagged" className="mt-8">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {mentionPost.map((post) => (
+                {mentionPost?.map((post) => (
                     <div key={post.id}>
                         <PostCard post={post} />
                     </div>
