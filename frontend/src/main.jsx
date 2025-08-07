@@ -7,8 +7,6 @@ import { ClerkProvider } from '@clerk/clerk-react'
 import { Provider } from 'react-redux'
 import store from './store/store.js'
 
-const navigate = useNavigate();
-
 createRoot(document.getElementById('root')).render(
     <ClerkProvider publishableKey='pk_test_YWRhcHRlZC1zd2FuLTQxLmNsZXJrLmFjY291bnRzLmRldiQ' afterSignOutUrl={"/"} signUpFallbackRedirectUrl={"/"} >
       <Provider store={store}>
